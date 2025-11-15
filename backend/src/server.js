@@ -7,10 +7,10 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:5173"],
-        methods: ["GET", "POST", "PUT", "DELETE"], // Các phương thức được phép
-        allowedHeaders: ["Content-Type", "Authorization"], // Các headers được phép
-        credentials: true, // Cho phép cookies và credentials
+        origin: ["http://localhost:5000"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
     })
 );
 

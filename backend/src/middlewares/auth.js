@@ -1,23 +1,22 @@
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET;
+import AuthToken from "../utils/auth-token.js";
 
 export const adminAuth = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.accessToken;
 
-    if (!authHeader || !authHeader.startsWith("Bearer "))
+    if (!token) {
         return res.status(401).json({ error: "Không tìm thấy token truy cập." });
-
-    const token = authHeader.split(" ")[1];
+    }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = AuthToken.verifyToken(token);
 
-        if (decoded.role !== "admin")
+        if (!decoded) {
             return res.status(403).json({ error: "Bạn không có quyền truy cập tính năng này." });
+        }
 
         next();
     } catch (err) {
+        console.error("Token verification error:", err);
         return res.status(401).json({ error: "Token không hợp lệ hoặc đã hết hạn." });
     }
 };

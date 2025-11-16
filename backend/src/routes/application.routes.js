@@ -8,9 +8,9 @@ router.post("/create", async (req, res) => {
     try {
         const data = req.body;
         const result = await ApplicationService.create(data);
-        res.status(201).json(result);
+        return res.status(201).json(result);
     } catch {
-        res.status(500).json({ message: "Lỗi Server" });
+        return res.status(500).json({ message: "Lỗi Server" });
     }
 });
 
@@ -18,15 +18,23 @@ router.get("/find-by-id/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const result = await ApplicationService.findById(id);
-        res.status(200).json(result);
+        return res.status(200).json(result);
     } catch (error) {
         switch (error.message) {
             case "APPLICATION_NOT_FOUND":
-                res.status(404).json({ message: "Đơn không tồn tại" });
-                break;
+                return res.status(404).json({ message: "Đơn không tồn tại" });
             default:
-                res.status(500).json({ message: "Lỗi Server" });
+                return res.status(500).json({ message: "Lỗi Server" });
         }
+    }
+});
+
+router.get("/find-all", adminAuth, async (req, res) => {
+    try {
+        const result = await ApplicationService.findAll();
+        return res.status(200).json(result);
+    } catch (error) {
+        return res.status(500).json({ message: "Lỗi Server" });
     }
 });
 

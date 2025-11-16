@@ -13,6 +13,10 @@ class ApplicationService {
         if (!result) throw new Error("APPLICATION_NOT_FOUND");
         return result;
     }
+
+    static async findAll() {
+        return await ApplicationDAO.findAll();
+    }
 }
 
 export default ApplicationService;

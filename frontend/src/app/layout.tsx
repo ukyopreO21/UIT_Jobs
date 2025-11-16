@@ -4,6 +4,8 @@ import { Lexend, Montserrat } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
+import GlobalLoader from "@/components/GlobalLoader";
+
 const lexendFont = Lexend({
     variable: "--font-lexend",
     subsets: ["latin"],
@@ -29,6 +31,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
             <body className={`${lexendFont.variable} antialiased`}>
                 {children}
                 <Toaster position="top-right" />
+                <GlobalLoader />
             </body>
         </html>
     );

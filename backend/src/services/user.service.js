@@ -1,5 +1,6 @@
 import UserDAO from "../dao/user.dao.js";
 import EncryptPassword from "../utils/encrypt-password.js";
+import AuthToken from "../utils/auth-token.js";
 
 class UserService {
     static async createAccount(user) {
@@ -19,8 +20,28 @@ class UserService {
             throw new Error("INCORRECT_PASSWORD");
         }
 
+        const accessToken = AuthToken.createAccessToken({
+            username: result.username,
+            password: result.password,
+        });
+
+        const refreshToken = AuthToken.createRefreshToken({
+            username: result.username,
+            password: result.password,
+        });
+
         const { password, ...userWithoutPassword } = result;
-        return userWithoutPassword;
+        return { ...userWithoutPassword, accessToken, refreshToken };
+    }
+
+    static async renewAccessToken(refreshToken) {
+        const payload = AuthToken.verifyRefreshToken(refreshToken);
+        if (!payload) throw new Error("INVALID_REFRESH_TOKEN");
+        const newAccessToken = AuthToken.createAccessToken({
+            username: payload.username,
+            password: payload.password,
+        });
+        return { accessToken: newAccessToken };
     }
 }
 

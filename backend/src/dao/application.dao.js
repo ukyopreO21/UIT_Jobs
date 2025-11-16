@@ -61,6 +61,12 @@ class ApplicationDAO {
         const [result] = await db.execute(query, [...val, id]);
         return result;
     }
+
+    static async findAll() {
+        const query = "SELECT * FROM applications";
+        const [result] = await db.execute(query);
+        return result;
+    }
 }
 
 export default ApplicationDAO;

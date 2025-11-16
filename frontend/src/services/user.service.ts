@@ -18,6 +18,22 @@ class UserService {
             } else toast.error("Lỗi không xác định");
         }
     }
+
+    static async logout() {
+        try {
+            const response = await axiosInstance.post("/user/logout");
+            toast.success("Đăng xuất thành công");
+            return response.data;
+        } catch (error: unknown) {
+            console.error("Logout error:", error);
+            if (axios.isAxiosError(error) && error.response) {
+                const errorMessage =
+                    error.response.data?.message ||
+                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                toast.error(errorMessage);
+            } else toast.error("Lỗi không xác định");
+        }
+    }
 }
 
 export default UserService;

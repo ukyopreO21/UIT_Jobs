@@ -3,13 +3,21 @@ import axiosInstance from "@/libs/axios-instance";
 import toast from "react-hot-toast";
 
 class ApplicationService {
-    static async getApplications() {
+    static async findAll() {
         try {
             const response = await axiosInstance.get("/application/find-all");
-            console.log("Application data:", response.data);
             return response.data;
         } catch (error: unknown) {
             console.error("Get applications error:", error);
+        }
+    }
+
+    static async findById(id: string) {
+        try {
+            const response = await axiosInstance.get(`/application/find-by-id/${id}`);
+            return response.data;
+        } catch (error: unknown) {
+            console.error("Get application by ID error:", error);
         }
     }
 }

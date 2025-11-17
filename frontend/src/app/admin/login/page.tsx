@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import useLoadingRouter from "@/hooks/useLoadingRouter";
 import { AiOutlineUser, AiOutlineLock } from "react-icons/ai";
+import useLoadingStore from "@/stores/loading.store";
 import useUserStore from "@/stores/user.store";
 
 const LoginPage = () => {
@@ -10,8 +11,8 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
 
     const router = useLoadingRouter();
+    const isLoading = useLoadingStore((state) => state.isLoading);
     const user = useUserStore((state) => state.user);
-    const loading = useUserStore((state) => state.loading);
     const login = useUserStore((state) => state.login);
 
     const handleLogin = (e: FormEvent) => {
@@ -47,11 +48,11 @@ const LoginPage = () => {
                 </div>
                 <button
                     onClick={handleLogin}
-                    disabled={loading}
+                    disabled={isLoading}
                     className={`bg-blue-700 text-white font-semibold transition duration-200 hover:bg-blue-500 rounded-lg h-12 flex items-center justify-center gap-2 ${
-                        loading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
+                        isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
                     }`}>
-                    {loading ? (
+                    {isLoading ? (
                         <>
                             <svg
                                 className="animate-spin h-5 w-5 text-white"

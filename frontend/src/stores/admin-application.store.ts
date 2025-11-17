@@ -1,39 +1,40 @@
 import { create } from "zustand";
+import Application from "@/types/Application";
 import UserService from "@/services/application.service";
+import useLoadingStore from "./loading.store";
 
-interface Application {
-    username: string;
-    email: string;
-    phone: string;
-    fullName: string;
-}
+const { showLoading, hideLoading } = useLoadingStore.getState();
 
 interface ApplicationState {
     applications: Array<Application> | null;
-    loading: boolean;
-    error: string | null;
-    // example of zustand actions
-    // login: (username: string, password: string) => Promise<void>;
-    // logout: () => void;
-    getApplications: () => Promise<void>;
+    applicationDetail: Application | null;
+    findAll: () => Promise<void>;
+    findById: (id: string) => Promise<void | null>;
+    setApplicationDetail: (application: Application) => void;
 }
 
 const useAdminApplicationStore = create<ApplicationState>((set) => ({
     applications: null,
-    loading: false,
-    error: null,
+    applicationDetail: null,
 
-    // login: async (username: string, password: string) => {
-    //     set({ loading: true, error: null });
-    //     const userData = await UserService.login(username, password);
-    //     set({ user: userData, loading: false });
-    // },
+    findAll: async () => {
+        showLoading();
+        const result = await UserService.findAll();
+        set({ applications: result });
+        hideLoading();
+    },
 
-    // logout: () => set({ user: null, loading: false, error: null }),
-    getApplications: async () => {
-        set({ loading: true, error: null });
-        const applicationData = await UserService.getApplications();
-        set({ applications: applicationData, loading: false });
+    findById: async (id: string) => {
+        showLoading();
+        const result = await UserService.findById(id);
+        set({ applicationDetail: result });
+        hideLoading();
+    },
+
+    setApplicationDetail: (application: Application) => {
+        showLoading();
+        set({ applicationDetail: application });
+        hideLoading();
     },
 }));
 

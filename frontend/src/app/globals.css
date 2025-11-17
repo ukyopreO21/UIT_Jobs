@@ -15,3 +15,27 @@
 body {
 	font-family: "Lexend", sans-serif;
 }
+
+.tab-underline {
+	position: relative;
+}
+
+.tab-underline::after {
+	content: "";
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: transparent;
+	transition: background-color 200ms ease-in-out;
+	outline: none
+}
+
+.tab-underline[data-hover]::after {
+	background-color: #dbe4ff;
+}
+
+.tab-underline[data-selected]::after {
+	background-color: #4263eb;
+}

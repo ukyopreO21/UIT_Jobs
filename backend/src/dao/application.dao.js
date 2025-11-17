@@ -37,15 +37,19 @@ class ApplicationDAO {
     }
 
     static async findById(id) {
-        const query = "SELECT * FROM applications WHERE id = ?";
+        const query = `
+			SELECT applications.*, jobs.position, jobs.department
+			FROM applications
+			INNER JOIN jobs ON applications.job_id = jobs.id
+			WHERE applications.id = ?`;
         const [result] = await db.execute(query, [id]);
         return result.length ? result[0] : undefined;
     }
 
-    static async findByFields(data) {
-        const cols = Object.keys(data);
-        const val = Object.values(data);
-    }
+    // static async findByFields(data) {
+    //     const cols = Object.keys(data);
+    //     const val = Object.values(data);
+    // }
 
     static async updateById(data) {
         const { id, ...fieldsToUpdate } = data;
@@ -63,7 +67,10 @@ class ApplicationDAO {
     }
 
     static async findAll() {
-        const query = "SELECT * FROM applications";
+        const query = `
+			SELECT applications.*, jobs.position, jobs.department
+			FROM applications
+			INNER JOIN jobs ON applications.job_id = jobs.id;`;
         const [result] = await db.execute(query);
         return result;
     }

@@ -1,10 +1,10 @@
 "use client";
 
+import useUserStore from "@/stores/user.store";
+import User from "@/types/User";
 import { ReactNode } from "react";
 import ManageMenu from "./components/ManageMenu";
 import ManageUserButton from "./components/ManageUserButton";
-
-import useUserStore, { User } from "@/stores/user.store";
 
 export default function ManageLayout({ children }: { children: ReactNode }) {
     const user = useUserStore((state) => state.user) as User | null;
@@ -17,7 +17,7 @@ export default function ManageLayout({ children }: { children: ReactNode }) {
                 <ManageUserButton user={user} />
             </div>
 
-            <div className="flex-1 p-4 bg-[#f6f6f6]">{children}</div>
+            <div className="relative flex-1 p-4 bg-[#f6f6f6]">{children}</div>
         </div>
     );
 }

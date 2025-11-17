@@ -3,7 +3,8 @@ import useLoadingRouter from "@/hooks/useLoadingRouter";
 import { AiOutlineEdit } from "react-icons/ai";
 import { HiOutlineArrowLeftOnRectangle, HiOutlineEllipsisVertical } from "react-icons/hi2";
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
-import useUserStore, { User } from "@/stores/user.store";
+import useUserStore from "@/stores/user.store";
+import User from "@/types/User";
 
 const UserButton = ({ user }: { user: User | null }) => {
     const accountMenu = [

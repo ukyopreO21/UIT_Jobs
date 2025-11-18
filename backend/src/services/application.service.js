@@ -14,8 +14,14 @@ class ApplicationService {
         return result;
     }
 
-    static async findAll() {
-        return await ApplicationDAO.findAll();
+    static async findByFields(data) {
+        const { page, resultPerPage, searchValue, ...fields } = data;
+        const pageNum = parseInt(page);
+        const perPage = parseInt(resultPerPage);
+
+        const result = await ApplicationDAO.findByFields(fields, searchValue, pageNum, perPage);
+        if (!result) throw new Error("APPLICATIONS_NOT_FOUND");
+        return result;
     }
 }
 

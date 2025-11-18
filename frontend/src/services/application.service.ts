@@ -3,21 +3,21 @@ import axiosInstance from "@/libs/axios-instance";
 import toast from "react-hot-toast";
 
 class ApplicationService {
-    static async findAll() {
-        try {
-            const response = await axiosInstance.get("/application/find-all");
-            return response.data;
-        } catch (error: unknown) {
-            console.error("Get applications error:", error);
-        }
-    }
-
     static async findById(id: string) {
         try {
             const response = await axiosInstance.get(`/application/find-by-id/${id}`);
             return response.data;
+        } catch (error: unknown) {}
+    }
+
+    static async findByFields(data: Object) {
+        try {
+            const response = await axiosInstance.get(`/application/find-by-fields`, {
+                params: data,
+            });
+            return response.data;
         } catch (error: unknown) {
-            console.error("Get application by ID error:", error);
+            toast.error("Tìm kiếm hồ sơ thất bại. Vui lòng thử lại.");
         }
     }
 }

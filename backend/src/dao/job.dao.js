@@ -3,12 +3,13 @@ import db from "../config/db.js";
 class JobDAO {
     static async create(data) {
         const query =
-            "INSERT INTO jobs (title, location, department, position, description, quantity, salary, degree, deadline) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO jobs (title, location, faculty, position, description, quantity, salary, degree, deadline) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         const [result] = await db.execute(query, [
             data.title,
             data.location,
-            data.department,
+            data.faculty,
+            data.discipline,
             data.position,
             data.description,
             data.quantity,

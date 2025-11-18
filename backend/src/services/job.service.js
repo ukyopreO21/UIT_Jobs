@@ -12,7 +12,7 @@ class JobService {
     }
 
     static async findByFields(data) {
-        const allowedFields = ["title", "department", "position", "degree"];
+        const allowedFields = ["title", "faculty", "discipline", "position", "degree"];
         const keys = Object.keys(data);
 
         for (const field of keys) {

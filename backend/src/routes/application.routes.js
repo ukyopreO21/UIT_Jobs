@@ -29,12 +29,17 @@ router.get("/find-by-id/:id", async (req, res) => {
     }
 });
 
-router.get("/find-all", adminAuth, async (req, res) => {
+router.get("/find-by-fields", adminAuth, async (req, res) => {
     try {
-        const result = await ApplicationService.findAll();
+        const result = await ApplicationService.findByFields(req.query);
         return res.status(200).json(result);
     } catch (error) {
-        return res.status(500).json({ message: "Lỗi Server" });
+        switch (error.message) {
+            case "APPLICATIONS_NOT_FOUND":
+                return res.status(404).json({ message: "Không tìm thấy đơn ứng tuyển" });
+            default:
+                return res.status(500).json({ message: "Lỗi Server" });
+        }
     }
 });
 

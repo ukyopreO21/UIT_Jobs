@@ -9,7 +9,6 @@ class UserService {
             toast.success("Đăng nhập thành công");
             return response.data;
         } catch (error: unknown) {
-            console.error("Login error:", error);
             if (axios.isAxiosError(error) && error.response) {
                 const errorMessage =
                     error.response.data?.message ||
@@ -25,7 +24,6 @@ class UserService {
             toast.success("Đăng xuất thành công");
             return response.data;
         } catch (error: unknown) {
-            console.error("Logout error:", error);
             if (axios.isAxiosError(error) && error.response) {
                 const errorMessage =
                     error.response.data?.message ||

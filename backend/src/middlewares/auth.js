@@ -16,7 +16,6 @@ export const adminAuth = (req, res, next) => {
 
         next();
     } catch (err) {
-        console.error("Token verification error:", err);
         return res.status(401).json({ error: "Token không hợp lệ hoặc đã hết hạn." });
     }
 };

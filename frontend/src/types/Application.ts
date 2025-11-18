@@ -11,7 +11,8 @@ export default interface Application {
     applicant_phone: string;
     applicant_email: string;
     second_choice_position: string;
-    second_choice_department: string;
+    second_choice_faculty: string;
+    second_choice_discipline: string;
     applicant_degree: string;
     applicant_inst_name: string;
     applicant_major: string;
@@ -24,5 +25,6 @@ export default interface Application {
     created_at: string;
     updated_at: string;
     position: string;
-    department: string;
+    faculty: string;
+    discipline: string;
 }

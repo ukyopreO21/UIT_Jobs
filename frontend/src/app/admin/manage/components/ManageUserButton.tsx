@@ -23,9 +23,7 @@ const UserButton = ({ user }: { user: User | null }) => {
         try {
             await logout();
             router.push("/admin/login");
-        } catch (error) {
-            console.error("Logout failed", error);
-        }
+        } catch (error) {}
     };
 
     return (

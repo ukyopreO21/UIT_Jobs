@@ -1,68 +1,53 @@
 import { create } from "zustand";
-import Application from "@/types/Application";
-import UserService from "@/services/application.service";
-import useLoadingStore from "./loading.store";
+import Job from "@/types/Job";
+import JobService from "@/services/job.service";
 import useAvailableFiltersStore from "./available-filters.store";
+import useLoadingStore from "./loading.store";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
 const { setAvailableFilterValues } = useAvailableFiltersStore.getState();
-
-interface quantityPerStatus {
-    [key: string]: number;
-}
 
 interface FilterGroup {
     faculty: string;
     disciplines: string[];
 }
 
-interface ApplicationState {
-    applications: Array<Application> | null;
-    applicationDetail: Application | null;
-    quantityPerStatus: quantityPerStatus;
+interface JobState {
+    jobs: Array<Job> | null;
+    jobDetail: Job | null;
 
     searchValue: string;
     fields: {
-        status?: string;
         positions?: string[];
         filters?: FilterGroup[];
-        startDate?: string;
-        endDate?: string;
-        [key: string]: any;
+        deadline?: string;
     };
     resultPerPage: number;
     currentPage: number;
     totalPages: number;
 
-    setApplicationDetail: (application: Application) => void;
+    setJobDetail: (job: Job) => void;
     setSearchValue: (value: string) => void;
     setFields: (fields: Object) => void;
     setResultPerPage: (num: number) => void;
     setCurrentPage: (num: number) => void;
-    findById: (id: string) => Promise<void>;
+    findById: (id: number) => Promise<void>;
     findByFields: () => Promise<void>;
 }
 
-const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
-    applications: null,
-    applicationDetail: null,
-    quantityPerStatus: {
-        "Đã ghi nhận": 0,
-        "Đang phỏng vấn": 0,
-        "Được tuyển dụng": 0,
-        "Bị từ chối": 0,
-    },
+const useAdminJobStore = create<JobState>((set, get) => ({
+    jobs: null,
+    jobDetail: null,
     searchValue: "",
     fields: {
-        status: "Đã ghi nhận",
         filters: [],
     },
     resultPerPage: 10,
     currentPage: 1,
     totalPages: 1,
 
-    setApplicationDetail: (application: Application) => {
-        set({ applicationDetail: application });
+    setJobDetail: (job: Job) => {
+        set({ jobDetail: job });
     },
 
     setSearchValue: (value: string) => {
@@ -80,7 +65,6 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
     },
 
     setResultPerPage: async (num: number) => {
-        if (num === get().resultPerPage) return;
         set({ resultPerPage: num, currentPage: 1 });
         get().findByFields();
     },
@@ -91,10 +75,10 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
         get().findByFields();
     },
 
-    findById: async (id: string) => {
+    findById: async (id: number) => {
         showLoading();
-        const result = await UserService.findById(id);
-        set({ applicationDetail: result });
+        const result = await JobService.findById(id);
+        set({ jobDetail: result });
         hideLoading();
     },
 
@@ -107,11 +91,10 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
                 page: get().currentPage,
                 resultPerPage: get().resultPerPage,
             };
-            const result = await UserService.findByFields(data);
+            const result = await JobService.findByFields(data);
             set({
-                applications: result.data,
+                jobs: result.data,
                 totalPages: result.pagination.totalPages,
-                quantityPerStatus: result.quantityPerStatus,
             });
             setAvailableFilterValues(result.positions || [], result.faculties || []);
         } catch (error) {
@@ -121,4 +104,4 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
     },
 }));
 
-export default useAdminApplicationStore;
+export default useAdminJobStore;

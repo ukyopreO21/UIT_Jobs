@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb";
-import Backdrop from "./components/Backdrop";
+import Backdrop from "../components/ManageBackdrop";
 import ComplexTable from "./components/ComplexTable";
 import DetailsView from "./components/DetailsView";
 import FiltersView from "./components/FiltersView";

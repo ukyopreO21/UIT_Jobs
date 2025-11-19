@@ -2,7 +2,7 @@ import Application from "@/types/Application";
 import { formatDatetime } from "@/utils/format-date";
 import { AiOutlineFileText } from "react-icons/ai";
 
-const ManageList = ({
+const TableRows = ({
     data,
     colsToFill,
     toggleSideView,
@@ -76,4 +76,4 @@ const ManageList = ({
     );
 };
 
-export default ManageList;
+export default TableRows;

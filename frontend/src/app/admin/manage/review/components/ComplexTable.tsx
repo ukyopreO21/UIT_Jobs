@@ -1,6 +1,6 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import ManageFilterButton from "../../components/ManageFilterButton";
-import ManageList from "../../components/ManageList";
+import TableRows from "./TableRows";
 import ManageSearchBar from "../../components/ManageSearchBar";
 import ManagePagination from "../../components/ManagePagination";
 import useAdminApplicationStore from "@/stores/admin-application.store";
@@ -15,7 +15,6 @@ const ComplexTable = ({
 }) => {
     const applications = useAdminApplicationStore((state) => state.applications);
     const quantityPerStatus = useAdminApplicationStore((state) => state.quantityPerStatus);
-    const fields = useAdminApplicationStore((state) => state.fields);
     const resultPerPage = useAdminApplicationStore((state) => state.resultPerPage);
     const currentPage = useAdminApplicationStore((state) => state.currentPage);
     const totalPages = useAdminApplicationStore((state) => state.totalPages);
@@ -74,7 +73,10 @@ const ComplexTable = ({
                                 <ManageFilterButton
                                     toggleSideView={() => toggleFiltersView(true)}
                                 />
-                                <ManageSearchBar handleSearch={setSearchValue} />
+                                <ManageSearchBar
+                                    handleSearch={setSearchValue}
+                                    placeholder="Tìm kiếm hồ sơ..."
+                                />
                             </div>
                             {applications && applications.length > 0 ? (
                                 <div className="flex-1 overflow-auto">
@@ -91,7 +93,7 @@ const ComplexTable = ({
                                             </tr>
                                         </thead>
 
-                                        <ManageList
+                                        <TableRows
                                             data={applications}
                                             colsToFill={colsToFill}
                                             toggleSideView={() => toggleDetailsView(true)}
@@ -108,6 +110,7 @@ const ComplexTable = ({
                                 resultPerPage={resultPerPage}
                                 currentPage={currentPage}
                                 totalPages={totalPages}
+                                handleResultPerPage={(size) => setResultPerPage(size)}
                                 handleFirstPage={() => setCurrentPage(1)}
                                 handlePrevPage={() => setCurrentPage(currentPage - 1)}
                                 handleCurrentPage={(page) => setCurrentPage(page)}

@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import { AiOutlineClose } from "react-icons/ai";
-import useAdminApplicationStore from "@/stores/admin-application.store";
+import useAdminJobStore from "@/stores/admin-job.store";
 import useAvailableFiltersStore from "@/stores/available-filters.store";
 
 const FiltersView = ({
@@ -18,7 +18,7 @@ const FiltersView = ({
     const [endDate, setEndDate] = useState<string>("");
 
     const availableFilterValues = useAvailableFiltersStore((state) => state);
-    const setFields = useAdminApplicationStore((state) => state.setFields);
+    const setFields = useAdminJobStore((state) => state.setFields);
 
     const updateFields = () => {
         const positions = Object.keys(checkedPositions).filter((pos) => checkedPositions[pos]);
@@ -114,7 +114,7 @@ const FiltersView = ({
 
                 <div className="flex flex-col flex-1 overflow-y-auto">
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Thời gian nộp</span>
+                        <span className="font-medium text-lg">Hạn chót</span>
                         <div className="flex">
                             <span className="flex-1 text-[#535458]">Từ ngày</span>
                             <input
@@ -129,7 +129,7 @@ const FiltersView = ({
                             <input
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
-                                className="outline-none cursor-pointer"
+                                className="outline-none"
                                 type="date"
                             />
                         </div>

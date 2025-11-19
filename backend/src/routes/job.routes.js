@@ -31,17 +31,14 @@ router.get("/find-by-id/:id", async (req, res) => {
 
 router.get("/find-by-fields", async (req, res) => {
     try {
-        const data = req.query;
-        const result = await JobService.findByFields(data);
+        const result = await JobService.findByFields(req.query);
         return res.status(200).json(result);
     } catch (error) {
         switch (error.message) {
-            case "INVALID_FIELD":
-                return res.status(400).json({ error: "Trường tìm kiếm không hợp lệ." });
-            case "NO_JOBS_FOUND":
-                return res.status(404).json({ error: "Không tìm thấy công việc nào." });
+            case "JOBS_NOT_FOUND":
+                return res.status(404).json({ message: "Không tìm thấy việc làm nào." });
             default:
-                return res.status(500).json({ error: error.message });
+                return res.status(500).json({ message: "Lỗi Server" });
         }
     }
 });

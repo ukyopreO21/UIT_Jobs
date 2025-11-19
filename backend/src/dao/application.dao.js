@@ -1,4 +1,5 @@
 import db from "../config/db.js";
+import JobDAO from "./job.dao.js";
 import unflattenObject from "../utils/unflatten-object.js";
 
 class ApplicationDAO {
@@ -28,7 +29,7 @@ class ApplicationDAO {
             "applicant_note",
         ];
 
-        const values = columns.map((col) => data[col]);
+        const values = columns.map((col) => data[col] ?? null);
 
         const placeholders = new Array(columns.length).fill("?").join(", ");
 
@@ -46,30 +47,6 @@ class ApplicationDAO {
 			WHERE applications.id = ?`;
         const [result] = await db.execute(query, [id]);
         return result.length ? result[0] : undefined;
-    }
-
-    static async getAllFaculties() {
-        const [rows] = await db.execute(`SELECT faculty, discipline FROM jobs`);
-        const facultyMap = {};
-
-        rows.forEach((row) => {
-            if (!facultyMap[row.faculty]) {
-                facultyMap[row.faculty] = new Set();
-            }
-            if (row.discipline) {
-                facultyMap[row.faculty].add(row.discipline);
-            }
-        });
-
-        return Object.keys(facultyMap).map((name) => ({
-            name,
-            disciplines: Array.from(facultyMap[name]),
-        }));
-    }
-
-    static async getAllPositions() {
-        const [rows] = await db.execute(`SELECT DISTINCT position FROM jobs`);
-        return rows.map((row) => row.position);
     }
 
     static async getQuantityPerStatus() {
@@ -116,9 +93,9 @@ class ApplicationDAO {
             INNER JOIN jobs ON applications.job_id = jobs.id
             ${whereClause}
             ORDER BY applications.created_at DESC
-            LIMIT ? OFFSET ?
+            LIMIT ${resultPerPage} OFFSET ${offset}
         `;
-        const [result] = await db.execute(query, [...val, resultPerPage, offset]);
+        const [result] = await db.execute(query, [...val]);
         return result;
     }
 
@@ -137,8 +114,8 @@ class ApplicationDAO {
         );
 
         const quantityPerStatus = await this.getQuantityPerStatus();
-        const positions = await this.getAllPositions();
-        const faculties = await this.getAllFaculties();
+        const positions = await JobDAO.getAllPositions();
+        const faculties = await JobDAO.getAllFaculties();
 
         return {
             data,
@@ -218,15 +195,17 @@ class ApplicationDAO {
         }
 
         const { startDate, endDate } = fields;
+        const fixedStartDate = startDate ? startDate + " 00:00:00" : null;
+        const fixedEndDate = endDate ? endDate + " 23:59:59" : null;
         if (startDate && endDate) {
             whereParts.push(`applications.created_at BETWEEN ? AND ?`);
-            values.push(startDate, endDate);
+            values.push(fixedStartDate, fixedEndDate);
         } else if (startDate) {
             whereParts.push(`applications.created_at >= ?`);
-            values.push(startDate);
+            values.push(fixedStartDate);
         } else if (endDate) {
             whereParts.push(`applications.created_at <= ?`);
-            values.push(endDate);
+            values.push(fixedEndDate);
         }
 
         if (searchValue) {

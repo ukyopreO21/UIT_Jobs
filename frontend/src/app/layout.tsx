@@ -25,6 +25,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <html lang="vi">
             <head>
+                <meta charSet="UTF-8" />
                 <link rel="icon" href="https://www.uit.edu.vn/sites/vi/files/favicon.ico" />
             </head>
 

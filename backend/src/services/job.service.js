@@ -12,17 +12,12 @@ class JobService {
     }
 
     static async findByFields(data) {
-        const allowedFields = ["title", "faculty", "discipline", "position", "degree"];
-        const keys = Object.keys(data);
+        const { page, resultPerPage, searchValue, ...fields } = data;
+        const pageNum = parseInt(page);
+        const perPage = parseInt(resultPerPage);
 
-        for (const field of keys) {
-            if (!allowedFields.includes(field)) {
-                throw new Error("INVALID_FIELD");
-            }
-        }
-
-        const result = await JobDAO.findByFields(data);
-        if (!result) throw new Error("NO_JOBS_FOUND");
+        const result = await JobDAO.findByFields(fields, searchValue, pageNum, perPage);
+        if (!result) throw new Error("JOBS_NOT_FOUND");
         return result;
     }
 }

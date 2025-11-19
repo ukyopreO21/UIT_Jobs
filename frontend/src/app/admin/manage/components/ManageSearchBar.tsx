@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
-const ManageSearchBar = ({ handleSearch }: { handleSearch: (query: string) => void }) => {
+const ManageSearchBar = ({
+    handleSearch,
+    placeholder,
+}: {
+    handleSearch: (query: string) => void;
+    placeholder?: string;
+}) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     return (
@@ -17,7 +23,7 @@ const ManageSearchBar = ({ handleSearch }: { handleSearch: (query: string) => vo
                     handleSearch(e.currentTarget.value);
                 }}
                 type="text"
-                placeholder="Tìm kiếm hồ sơ..."
+                placeholder={placeholder}
                 className="w-64 outline-none"
             />
         </div>

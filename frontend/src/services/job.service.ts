@@ -2,10 +2,10 @@ import axios from "axios";
 import axiosInstance from "@/libs/axios-instance";
 import toast from "react-hot-toast";
 
-class ApplicationService {
-    static async findById(id: string) {
+class JobService {
+    static async findById(id: number) {
         try {
-            const response = await axiosInstance.get(`/application/find-by-id/${id}`);
+            const response = await axiosInstance.post(`/job/find-by-id/${id}`);
             return response.data;
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
@@ -13,13 +13,13 @@ class ApplicationService {
                     error.response.data?.message ||
                     "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
                 toast.error(errorMessage);
-            } else toast.error("Lấy thông tin hồ sơ thất bại. Vui lòng thử lại.");
+            } else toast.error("Lấy thông tin việc làm thất bại. Vui lòng thử lại sau.");
         }
     }
 
     static async findByFields(data: Object) {
         try {
-            const response = await axiosInstance.get(`/application/find-by-fields`, {
+            const response = await axiosInstance.get(`/job/find-by-fields`, {
                 params: data,
             });
             return response.data;
@@ -29,9 +29,9 @@ class ApplicationService {
                     error.response.data?.message ||
                     "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
                 toast.error(errorMessage);
-            } else toast.error("Tìm kiếm hồ sơ thất bại. Vui lòng thử lại.");
+            } else toast.error("Tìm kiếm việc làm thất bại. Vui lòng thử lại.");
         }
     }
 }
 
-export default ApplicationService;
+export default JobService;

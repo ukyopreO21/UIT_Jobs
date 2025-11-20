@@ -22,6 +22,8 @@ const ComplexTable = ({
     const setResultPerPage = useAdminJobStore((state) => state.setResultPerPage);
     const setCurrentPage = useAdminJobStore((state) => state.setCurrentPage);
 
+    const isFieldsEmpty = useAdminJobStore((state) => state.isFieldsEmpty());
+
     const colsToShow = [
         "Mã việc làm",
         "Vị trí",
@@ -46,7 +48,10 @@ const ComplexTable = ({
     return (
         <div className="flex-1 flex flex-col min-h-0 h-full border border-[#e7e7e8] bg-white rounded-md overflow-hidden">
             <div className="px-4 h-18 w-full flex justify-between items-center border-b border-[#e7e7e8]">
-                <ManageFilterButton toggleSideView={() => toggleFiltersView(true)} />
+                <ManageFilterButton
+                    toggleSideView={() => toggleFiltersView(true)}
+                    hasNoti={!isFieldsEmpty}
+                />
                 <ManageSearchBar handleSearch={setSearchValue} placeholder="Tìm kiếm việc làm..." />
             </div>
 
@@ -81,6 +86,7 @@ const ComplexTable = ({
                 resultPerPage={resultPerPage}
                 currentPage={currentPage}
                 totalPages={totalPages}
+                handleResultPerPage={(size) => setResultPerPage(size)}
                 handleFirstPage={() => setCurrentPage(1)}
                 handlePrevPage={() => setCurrentPage(currentPage - 1)}
                 handleCurrentPage={(page) => setCurrentPage(page)}

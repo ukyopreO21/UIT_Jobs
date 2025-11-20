@@ -4,7 +4,7 @@ import { formatDate } from "@/utils/format-date";
 import { Transition } from "@headlessui/react";
 import useAdminJobStore from "@/stores/admin-job.store";
 
-interface JobUpdateForm {
+interface JobCreateForm {
     title: string | null;
     location: string;
     faculty: string | null;
@@ -30,7 +30,7 @@ const fieldNamesMap: { [key: string]: string } = {
     deadline: "Hạn nộp",
 };
 
-const DetailsView = ({
+const CreateView = ({
     toggleSideView,
     isSideViewShowing,
 }: {
@@ -38,9 +38,9 @@ const DetailsView = ({
     isSideViewShowing: boolean;
 }) => {
     const jobDetail = useAdminJobStore((state) => state.jobDetail);
-    const updateById = useAdminJobStore((state) => state.updateById);
+    const create = useAdminJobStore((state) => state.create);
 
-    const [updateForm, setUpdateForm] = useState<JobUpdateForm>({
+    const [createForm, setCreateForm] = useState<JobCreateForm>({
         title: null,
         location:
             "Trường Đại học Công nghệ Thông tin - Đại học Quốc gia TP.HCM, Khu phố 34, Phường Linh Xuân, Thành phố Hồ Chí Minh",
@@ -56,7 +56,7 @@ const DetailsView = ({
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setUpdateForm((prev) => ({
+        setCreateForm((prev) => ({
             ...prev,
             [name]: value,
         }));
@@ -64,7 +64,7 @@ const DetailsView = ({
 
     useEffect(() => {
         if (jobDetail) {
-            setUpdateForm({
+            setCreateForm({
                 title: jobDetail.title,
                 location: jobDetail.location,
                 faculty: jobDetail.faculty,
@@ -79,7 +79,7 @@ const DetailsView = ({
         }
     }, [jobDetail, toggleSideView]);
 
-    const formKeys = Object.keys(updateForm) as (keyof JobUpdateForm)[];
+    const formKeys = Object.keys(createForm) as (keyof JobCreateForm)[];
 
     return (
         <Transition
@@ -94,8 +94,8 @@ const DetailsView = ({
             <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-20 right-4 w-140 h-fit max-h-[calc(100vh-6rem)] rounded-lg overflow-hidden shadow-md">
                 <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
                     <div className="flex flex-col gap-1">
-                        <span className="text-xl font-medium">#{jobDetail?.id}</span>
-                        <span className="text-[#535458]">Mã việc làm</span>
+                        <span className="text-xl font-medium">Việc làm</span>
+                        <span className="text-[#535458]">Thêm mới</span>
                     </div>
                     <button className="cursor-pointer" onClick={() => toggleSideView(false)}>
                         <AiOutlineClose
@@ -108,7 +108,7 @@ const DetailsView = ({
                 <div className="flex flex-col grow overflow-y-auto">
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 shrink-0">
                         {formKeys.map((key) => {
-                            const value = updateForm[key] ?? "";
+                            const value = createForm[key] ?? "";
                             const fieldName = fieldNamesMap[key] || key;
 
                             if (key === "description") {
@@ -167,9 +167,10 @@ const DetailsView = ({
                     <button
                         className="px-4 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer"
                         onClick={() => {
-                            updateById(updateForm);
+                            create(createForm);
+                            toggleSideView(false);
                         }}>
-                        Cập nhật việc làm
+                        Thêm việc làm
                     </button>
                 </div>
             </div>
@@ -177,4 +178,4 @@ const DetailsView = ({
     );
 };
 
-export default DetailsView;
+export default CreateView;

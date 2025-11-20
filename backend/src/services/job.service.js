@@ -20,6 +20,12 @@ class JobService {
         if (!result) throw new Error("JOBS_NOT_FOUND");
         return result;
     }
+
+    static async updateById(data) {
+        const result = await JobDAO.updateById(data);
+        if (!result) throw new Error("JOB_UPDATE_FAILED");
+        return result;
+    }
 }
 
 export default JobService;

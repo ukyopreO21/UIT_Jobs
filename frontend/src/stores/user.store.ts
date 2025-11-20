@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { persist, createJSONStorage } from "zustand/middleware";
 import UserService from "@/services/user.service";
 import useLoadingStore from "./loading.store";
@@ -20,8 +22,16 @@ export const useUserStore = create<UserState>()(
             login: async (username: string, password: string) => {
                 try {
                     showLoading();
-                    const userData = await UserService.login(username, password);
-                    if (userData) set({ user: userData });
+                    const result = await UserService.login(username, password);
+                    toast.success("Đăng nhập thành công");
+                    set({ user: result });
+                } catch (error: unknown) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        const errorMessage =
+                            error.response.data?.message ||
+                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                        toast.error(errorMessage);
+                    } else toast.error("Lỗi không xác định");
                 } finally {
                     hideLoading();
                 }
@@ -31,7 +41,15 @@ export const useUserStore = create<UserState>()(
                 try {
                     showLoading();
                     await UserService.logout();
+                    toast.success("Đăng xuất thành công");
                     set({ user: null });
+                } catch (error: unknown) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        const errorMessage =
+                            error.response.data?.message ||
+                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                        toast.error(errorMessage);
+                    } else toast.error("Lỗi không xác định");
                 } finally {
                     hideLoading();
                 }

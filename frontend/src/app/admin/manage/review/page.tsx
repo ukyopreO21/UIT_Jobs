@@ -36,7 +36,9 @@ const ReviewPage = () => {
 
     return (
         <div className="flex flex-col gap-6 h-full">
-            <Breadcrumb items={[{ label: "Hồ sơ" }]} />
+            <div className="h-10 flex items-center">
+                <Breadcrumb items={[{ label: "Hồ sơ" }]} />
+            </div>
 
             <ComplexTable
                 toggleDetailsView={toggleDetailsView}

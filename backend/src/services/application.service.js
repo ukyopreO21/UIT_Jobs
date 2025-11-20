@@ -23,6 +23,12 @@ class ApplicationService {
         if (!result) throw new Error("APPLICATIONS_NOT_FOUND");
         return result;
     }
+
+    static async updateById(data) {
+        const result = await ApplicationDAO.updateById(data);
+        if (!result) throw new Error("APPLICATION_UPDATE_FAILED");
+        return result;
+    }
 }
 
 export default ApplicationService;

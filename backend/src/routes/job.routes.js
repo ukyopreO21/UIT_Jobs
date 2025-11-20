@@ -43,4 +43,18 @@ router.get("/find-by-fields", async (req, res) => {
     }
 });
 
+router.put("/update-by-id", adminAuth, async (req, res) => {
+    try {
+        const result = await JobService.updateById(req.body);
+        return res.status(200).json(result);
+    } catch (error) {
+        switch (error.message) {
+            case "JOB_UPDATE_FAILED":
+                return res.status(400).json({ message: "Cập nhật công việc thất bại" });
+            default:
+                return res.status(500).json({ message: "Lỗi Server" });
+        }
+    }
+});
+
 export default router;

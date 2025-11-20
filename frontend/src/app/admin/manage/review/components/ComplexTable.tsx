@@ -25,6 +25,8 @@ const ComplexTable = ({
     const setResultPerPage = useAdminApplicationStore((state) => state.setResultPerPage);
     const setCurrentPage = useAdminApplicationStore((state) => state.setCurrentPage);
 
+    const isFieldsEmpty = useAdminApplicationStore((state) => state.isFieldsEmpty());
+
     const colsToShow = [
         "Mã hồ sơ",
         "Thời gian nộp",
@@ -71,8 +73,10 @@ const ComplexTable = ({
                         <TabPanel className="h-full flex flex-1 flex-col" key={name}>
                             <div className="px-4 h-18 w-full flex justify-between items-center border-b border-[#e7e7e8]">
                                 <ManageFilterButton
+                                    hasNoti={!isFieldsEmpty}
                                     toggleSideView={() => toggleFiltersView(true)}
                                 />
+
                                 <ManageSearchBar
                                     handleSearch={setSearchValue}
                                     placeholder="Tìm kiếm hồ sơ..."

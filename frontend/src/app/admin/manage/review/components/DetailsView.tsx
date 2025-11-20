@@ -19,6 +19,7 @@ const DetailsView = ({
     isSideViewShowing: boolean;
 }) => {
     const applicationDetail = useAdminApplicationStore((state) => state.applicationDetail);
+    const updateById = useAdminApplicationStore((state) => state.updateById);
 
     const [selectedStatus, setSelectedStatus] = useState(Object || null);
 
@@ -47,7 +48,7 @@ const DetailsView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-16 right-4 w-160 rounded-lg overflow-hidden shadow-md">
+            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-20 right-4 w-160 rounded-lg overflow-hidden shadow-md">
                 <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
                     <div className="flex flex-col gap-1">
                         <span className="text-xl font-medium">#{applicationDetail?.id}</span>
@@ -263,7 +264,9 @@ const DetailsView = ({
                         }}>
                         Thoát
                     </button>
-                    <button className="px-4 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer">
+                    <button
+                        className="px-4 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer"
+                        onClick={() => updateById(selectedStatus.label)}>
                         Cập nhật hồ sơ
                     </button>
                 </div>

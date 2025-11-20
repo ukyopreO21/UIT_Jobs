@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import { AiOutlineClose } from "react-icons/ai";
 import useAdminApplicationStore from "@/stores/admin-application.store";
@@ -18,6 +18,7 @@ const FiltersView = ({
     const [endDate, setEndDate] = useState<string>("");
 
     const availableFilterValues = useAvailableFiltersStore((state) => state);
+    const fields = useAdminApplicationStore((state) => state.fields);
     const setFields = useAdminApplicationStore((state) => state.setFields);
 
     const updateFields = () => {
@@ -88,6 +89,37 @@ const FiltersView = ({
         }));
     };
 
+    useEffect(() => {
+        if (isSideViewShowing) {
+            setStartDate(fields.startDate || "");
+            setEndDate(fields.endDate || "");
+
+            const posMap: Record<string, boolean> = {};
+            if (fields.positions) {
+                fields.positions.forEach((p) => {
+                    posMap[p] = true;
+                });
+            }
+            setCheckedPositions(posMap);
+
+            const facMap: Record<string, boolean> = {};
+            const discMap: Record<string, boolean> = {};
+
+            if (fields.filters) {
+                fields.filters.forEach((item) => {
+                    facMap[item.faculty] = true;
+                    if (item.disciplines) {
+                        item.disciplines.forEach((d) => {
+                            discMap[d] = true;
+                        });
+                    }
+                });
+            }
+            setCheckedFaculties(facMap);
+            setCheckedDisciplines(discMap);
+        }
+    }, [isSideViewShowing, fields.startDate, fields.endDate, fields.positions, fields.filters]);
+
     return (
         <Transition
             as={Fragment}
@@ -98,7 +130,7 @@ const FiltersView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] top-16 right-4 w-120 rounded-lg overflow-hidden h-fit max-h-[calc(100vh-5rem)] shadow-md">
+            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] top-20 right-4 w-120 rounded-lg overflow-hidden h-fit max-h-[calc(100vh-6rem)] shadow-md">
                 <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
                     <div className="flex flex-col gap-1">
                         <span className="text-xl font-medium">Bộ lọc</span>

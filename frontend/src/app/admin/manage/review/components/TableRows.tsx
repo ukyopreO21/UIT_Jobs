@@ -65,8 +65,8 @@ const TableRows = ({
                                     toggleSideView();
                                 }}
                                 className="bg-[#dbe4ff] border-[#4263eb] rounded-md h-10 w-10 flex justify-center items-center cursor-pointer
-							transition duration-200 ease-in-out hover:bg-[#dbe4ff]">
-                                <AiOutlineFileText size={20} className="text-[#4263eb]" />
+											transition duration-200 ease-in-out hover:bg-[#4263eb] text-[#4263eb] hover:text-[#dbe4ff]">
+                                <AiOutlineFileText size={20} />
                             </button>
                         </div>
                     </td>

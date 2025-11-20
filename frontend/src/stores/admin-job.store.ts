@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import axios from "axios";
+import toast from "react-hot-toast";
 import Job from "@/types/Job";
 import JobService from "@/services/job.service";
 import useAvailableFiltersStore from "./available-filters.store";
@@ -20,7 +22,8 @@ interface JobState {
     fields: {
         positions?: string[];
         filters?: FilterGroup[];
-        deadline?: string;
+        startDate?: string;
+        endDate?: string;
     };
     resultPerPage: number;
     currentPage: number;
@@ -33,6 +36,10 @@ interface JobState {
     setCurrentPage: (num: number) => void;
     findById: (id: number) => Promise<void>;
     findByFields: () => Promise<void>;
+
+    isFieldsEmpty: () => boolean;
+    updateById: (data: Object) => Promise<void>;
+    create: (data: Object) => Promise<void>;
 }
 
 const useAdminJobStore = create<JobState>((set, get) => ({
@@ -76,10 +83,20 @@ const useAdminJobStore = create<JobState>((set, get) => ({
     },
 
     findById: async (id: number) => {
-        showLoading();
-        const result = await JobService.findById(id);
-        set({ jobDetail: result });
-        hideLoading();
+        try {
+            showLoading();
+            const result = await JobService.findById(id);
+            set({ jobDetail: result });
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                const errorMessage =
+                    error.response.data?.message ||
+                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                toast.error(errorMessage);
+            } else toast.error("Lấy thông tin việc làm thất bại. Vui lòng thử lại sau.");
+        } finally {
+            hideLoading();
+        }
     },
 
     findByFields: async () => {
@@ -97,7 +114,59 @@ const useAdminJobStore = create<JobState>((set, get) => ({
                 totalPages: result.pagination.totalPages,
             });
             setAvailableFilterValues(result.positions || [], result.faculties || []);
-        } catch (error) {
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                const errorMessage =
+                    error.response.data?.message ||
+                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                toast.error(errorMessage);
+            } else toast.error("Tìm kiếm việc làm thất bại. Vui lòng thử lại.");
+        } finally {
+            hideLoading();
+        }
+    },
+
+    isFieldsEmpty: () => {
+        const fields = get().fields;
+        return (
+            (!fields.filters || fields.filters.length === 0) &&
+            (!fields.positions || fields.positions.length === 0) &&
+            (!fields.startDate || fields.startDate === "") &&
+            (!fields.endDate || fields.endDate === "")
+        );
+    },
+
+    updateById: async (job: Object) => {
+        try {
+            showLoading();
+            const data = { id: get().jobDetail?.id, ...job };
+            await JobService.updateById(data);
+            set({ jobDetail: { ...get().jobDetail, ...job } as Job });
+            toast.success("Cập nhật việc làm thành công.");
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                const errorMessage =
+                    error.response.data?.message ||
+                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                toast.error(errorMessage);
+            } else toast.error("Cập nhật việc làm thất bại. Vui lòng thử lại.");
+        } finally {
+            hideLoading();
+        }
+    },
+
+    create: async (job: Object) => {
+        try {
+            showLoading();
+            await JobService.create(job);
+            toast.success("Thêm việc làm thành công.");
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                const errorMessage =
+                    error.response.data?.message ||
+                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                toast.error(errorMessage);
+            } else toast.error("Thêm việc làm thất bại. Vui lòng thử lại.");
         } finally {
             hideLoading();
         }

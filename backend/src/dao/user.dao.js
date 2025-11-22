@@ -45,6 +45,17 @@ class UserDAO {
     //     return result.length ? result : undefined;
     // }
 
+    static async updateInfo(data) {
+        const query = "UPDATE users SET email = ?, phone = ?, full_name = ? WHERE username = ?";
+        const [result] = await db.execute(query, [
+            data.email,
+            data.phone,
+            data.full_name,
+            data.username,
+        ]);
+        return result;
+    }
+
     static async updatePassword(username, newHashedPassword) {
         const query = "UPDATE users SET password = ? WHERE username = ?";
         const [result] = await db.execute(query, [newHashedPassword, username]);

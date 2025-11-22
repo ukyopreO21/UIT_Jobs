@@ -12,11 +12,17 @@ interface UserState {
     user: User | null;
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    updateInfo: (data: Object) => Promise<void>;
+    changePassword: (
+        currentPassword: string,
+        newPassword: string,
+        confirmNewPassword: string
+    ) => Promise<void>;
 }
 
 export const useUserStore = create<UserState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             user: null,
 
             login: async (username: string, password: string) => {
@@ -43,6 +49,58 @@ export const useUserStore = create<UserState>()(
                     await UserService.logout();
                     toast.success("Đăng xuất thành công");
                     set({ user: null });
+                } catch (error: unknown) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        const errorMessage =
+                            error.response.data?.message ||
+                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                        toast.error(errorMessage);
+                    } else toast.error("Lỗi không xác định");
+                } finally {
+                    hideLoading();
+                }
+            },
+
+            updateInfo: async (data) => {
+                try {
+                    showLoading();
+                    await UserService.updateInfo({ ...data, username: get().user?.username });
+                    toast.success("Cập nhật thông tin thành công");
+                    set((state) => ({
+                        user: { ...state.user, ...data } as User,
+                    }));
+                } catch (error: unknown) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        const errorMessage =
+                            error.response.data?.message ||
+                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
+                        toast.error(errorMessage);
+                    } else toast.error("Lỗi không xác định");
+                } finally {
+                    hideLoading();
+                }
+            },
+
+            changePassword: async (
+                currentPassword: string,
+                newPassword: string,
+                confirmNewPassword: string
+            ) => {
+                try {
+                    const username = get().user?.username;
+                    if (!currentPassword || !newPassword || !confirmNewPassword) {
+                        toast.error("Vui lòng điền đầy đủ thông tin");
+                        return;
+                    }
+                    if (newPassword !== confirmNewPassword) {
+                        toast.error("Mật khẩu mới và xác nhận mật khẩu mới không khớp");
+                        return;
+                    }
+                    showLoading();
+                    if (username) {
+                        await UserService.changePassword(username, currentPassword, newPassword);
+                        toast.success("Đổi mật khẩu thành công");
+                    } else toast.error("Người dùng không hợp lệ");
                 } catch (error: unknown) {
                     if (axios.isAxiosError(error) && error.response) {
                         const errorMessage =

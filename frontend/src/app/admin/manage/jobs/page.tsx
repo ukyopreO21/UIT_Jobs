@@ -46,12 +46,12 @@ const JobsPage = () => {
             <div className="flex justify-between items-center">
                 <Breadcrumb items={[{ label: "Việc làm" }]} />
                 <button
-                    className="flex items-center gap-2 h-10 px-2 rounded-md cursor-pointer bg-white border border-[#e7e7e8]
+                    className="flex items-center gap-2 h-10 px-3 rounded-md cursor-pointer bg-white border border-[#e7e7e8]
 									hover:text-[#4263eb] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] transition duration-200 ease-in-out"
                     onClick={() => {
                         toggleCreateView(true);
                     }}>
-                    <AiOutlinePlus className="inline-block ml-1" /> Thêm việc làm
+                    <AiOutlinePlus size={20} /> Thêm việc làm
                 </button>
             </div>
 

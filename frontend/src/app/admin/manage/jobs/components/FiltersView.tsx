@@ -193,7 +193,7 @@ const FiltersView = ({
 
                 <div className="flex justify-between items-center border-t border-[#e7e7e8] h-18 ml-4 pr-4 shrink-0">
                     <button
-                        className="px-4 h-10 bg-red-200/75 text-red-700 rounded-lg transition duration-200 ease-in-out cursor-pointer"
+                        className="px-3 h-10 bg-red-200/75 text-red-700 rounded-lg transition duration-200 ease-in-out cursor-pointer"
                         onClick={() => {
                             toggleSideView(false);
                         }}>
@@ -204,7 +204,7 @@ const FiltersView = ({
                             updateFields();
                             toggleSideView(false);
                         }}
-                        className="px-4 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer">
+                        className="px-3 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer">
                         Cập nhật bộ lọc
                     </button>
                 </div>

@@ -63,6 +63,38 @@ router.post("/renew-access-token", async (req, res) => {
     }
 });
 
+router.put("/update-info", async (req, res) => {
+    try {
+        const data = req.body;
+        const result = await UserService.updateInfo(data);
+        return res.status(200).json(result);
+    } catch (e) {
+        switch (e.message) {
+            case "USERNAME_REQUIRED":
+                return res.status(400).json({ message: "Yêu cầu cung cấp username" });
+            default:
+                return res.status(500).json({ message: "Lỗi Server" });
+        }
+    }
+});
+
+router.put("/change-password", async (req, res) => {
+    try {
+        const data = req.body;
+        const result = await UserService.changePassword(data);
+        return res.status(200).json(result);
+    } catch (e) {
+        switch (e.message) {
+            case "USER_NOT_FOUND":
+                return res.status(404).json({ message: "Người dùng không tồn tại" });
+            case "INCORRECT_PASSWORD":
+                return res.status(401).json({ message: "Mật khẩu hiện tại không đúng" });
+            default:
+                return res.status(500).json({ message: "Lỗi Server" });
+        }
+    }
+});
+
 router.post("/logout", async (req, res) => {
     res.clearCookie("accessToken", {
         httpOnly: true,

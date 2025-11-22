@@ -43,6 +43,28 @@ class UserService {
         });
         return { accessToken: newAccessToken };
     }
+
+    static async updateInfo(data) {
+        if (!data.username) throw new Error("USERNAME_REQUIRED");
+        return await UserDAO.updateInfo(data);
+    }
+
+    static async changePassword(data) {
+        const user = await UserDAO.findByUsername(data.username);
+        if (!user) throw new Error("USER_NOT_FOUND");
+
+        const isPasswordCorrect = await EncryptPassword.comparePassword(
+            data.currentPassword,
+            user.password
+        );
+        if (!isPasswordCorrect) throw new Error("INCORRECT_PASSWORD");
+
+        const hashedNewPassword = await EncryptPassword.hashPassword(data.newPassword);
+        const updatedUser = await UserDAO.updatePassword(data.username, hashedNewPassword);
+
+        const { password, ...userWithoutPassword } = updatedUser;
+        return userWithoutPassword;
+    }
 }
 
 export default UserService;

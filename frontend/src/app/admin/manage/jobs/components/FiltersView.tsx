@@ -98,10 +98,10 @@ const FiltersView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] top-20 right-4 w-120 rounded-lg overflow-hidden h-fit max-h-[calc(100vh-6rem)] shadow-md">
+            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] top-18 right-4 not-md:left-4 md:w-120 rounded-lg overflow-hidden h-fit max-h-[calc(100dvh-9.5rem)] lg:max-h-[calc(100dvh-5.5rem)] shadow-md text-responsive">
                 <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
                     <div className="flex flex-col gap-1">
-                        <span className="text-xl font-medium">Bộ lọc</span>
+                        <span className="text-lg lg:text-xl font-medium">Bộ lọc</span>
                         <span className="text-[#535458]">Điều chỉnh</span>
                     </div>
                     <button className="cursor-pointer" onClick={() => toggleSideView(false)}>

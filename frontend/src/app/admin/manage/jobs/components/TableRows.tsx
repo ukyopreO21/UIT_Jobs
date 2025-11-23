@@ -23,12 +23,12 @@ const TableRows = ({
                         const value = item[col];
                         return (
                             <td key={`${rowIdx}-${colIdx}`}>
-                                <div className="px-4 py-2 text-center">
+                                <div className="px-4 py-2 text-center text-responsive">
                                     {col === "deadline"
                                         ? value
                                             ? formatDate(value)
                                             : ""
-                                        : value ?? ""}
+                                        : (value ?? "")}
                                 </div>
                             </td>
                         );
@@ -40,9 +40,10 @@ const TableRows = ({
                                     handleLoadData(item);
                                     toggleSideView();
                                 }}
-                                className="bg-[#dbe4ff] border-[#4263eb] rounded-md h-10 w-10 flex justify-center items-center cursor-pointer
-											transition duration-200 ease-in-out hover:bg-[#4263eb] text-[#4263eb] hover:text-[#dbe4ff]">
-                                <AiOutlineFileText size={20} />
+                                className="rounded-md flex justify-center items-center cursor-pointer
+										bg-[#dbe4ff] border-[#4263eb] transition duration-200 ease-in-out hover:bg-[#4263eb] text-[#4263eb] hover:text-[#dbe4ff]
+										h-9 w-9 lg:h-10 lg:w-10">
+                                <AiOutlineFileText className="icon-responsive" />
                             </button>
                         </div>
                     </td>

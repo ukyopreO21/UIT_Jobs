@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lexend, Montserrat } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     description: "",
 };
 
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    viewportFit: "cover",
+    themeColor: "#ffffff",
+};
+
 const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
     return (
         <html lang="vi">
@@ -31,7 +39,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
 
             <body className={`${lexendFont.variable} antialiased`}>
                 {children}
-                <Toaster position="top-right" />
+                <Toaster position="top-right" containerClassName="text-responsive" />
                 <GlobalLoader />
             </body>
         </html>

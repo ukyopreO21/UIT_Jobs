@@ -11,8 +11,8 @@ const ManageSearchBar = ({
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     return (
-        <div className="flex items-center outline outline-[#e7e7e8] rounded-md w-fit h-10 p-2 gap-3 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out">
-            <HiMagnifyingGlass size={20} />
+        <div className="flex items-center outline outline-[#e7e7e8] rounded-md w-fit button-responsive gap-3 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out">
+            <HiMagnifyingGlass className="icon-responsive" />
             <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.currentTarget.value)}
@@ -24,7 +24,7 @@ const ManageSearchBar = ({
                 }}
                 type="text"
                 placeholder={placeholder}
-                className="w-64 outline-none"
+                className="w-full lg:w-64 outline-none text-responsive"
             />
         </div>
     );

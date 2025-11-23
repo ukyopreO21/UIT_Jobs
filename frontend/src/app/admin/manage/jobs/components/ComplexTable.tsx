@@ -47,7 +47,7 @@ const ComplexTable = ({
 
     return (
         <div className="flex-1 flex flex-col min-h-0 h-full border border-[#e7e7e8] bg-white rounded-md overflow-hidden">
-            <div className="px-4 h-18 w-full flex justify-between items-center border-b border-[#e7e7e8]">
+            <div className="px-4 h-17 lg:h-18 w-full flex justify-between items-center border-b border-[#e7e7e8]">
                 <ManageFilterButton
                     toggleSideView={() => toggleFiltersView(true)}
                     hasNoti={!isFieldsEmpty}
@@ -62,7 +62,9 @@ const ComplexTable = ({
                             <tr className="h-12 bg-[#f1f1f2]">
                                 {colsToShow.map((col, index) => (
                                     <th key={index} className="font-normal">
-                                        <div className="px-4 text-[#535458]">{col}</div>
+                                        <div className="px-4 text-[#535458] text-responsive">
+                                            {col}
+                                        </div>
                                     </th>
                                 ))}
                             </tr>
@@ -77,7 +79,7 @@ const ComplexTable = ({
                     </table>
                 </div>
             ) : (
-                <div className="w-full h-full flex-1 flex items-center justify-center">
+                <div className="w-full h-full flex-1 flex items-center justify-center text-responsive">
                     Không tìm thấy việc làm nào.
                 </div>
             )}

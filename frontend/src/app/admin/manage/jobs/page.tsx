@@ -42,16 +42,17 @@ const JobsPage = () => {
         fetchJobs();
     }, [findByFields]);
     return (
-        <div className="flex flex-col gap-6 h-full">
-            <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-4 h-full">
+            <div className="flex justify-between items-center h-10">
                 <Breadcrumb items={[{ label: "Việc làm" }]} />
                 <button
-                    className="flex items-center gap-2 h-10 px-3 rounded-md cursor-pointer bg-white border border-[#e7e7e8]
-									hover:text-[#4263eb] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] transition duration-200 ease-in-out"
+                    className="flex items-center gap-2 button-responsive rounded-md cursor-pointer bg-white border border-[#e7e7e8]
+									hover:text-[#4263eb] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] transition duration-200 ease-in-out
+									"
                     onClick={() => {
                         toggleCreateView(true);
                     }}>
-                    <AiOutlinePlus size={20} /> Thêm việc làm
+                    <AiOutlinePlus className="icon-responsive" /> Thêm việc làm
                 </button>
             </div>
 

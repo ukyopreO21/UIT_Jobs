@@ -11,7 +11,7 @@ const lexendFont = Lexend({
     subsets: ["latin"],
 });
 
-const montserratFont = Montserrat({
+export const montserratFont = Montserrat({
     variable: "--font-montserrat",
     subsets: ["latin"],
 });

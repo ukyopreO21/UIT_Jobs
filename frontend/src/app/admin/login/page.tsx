@@ -25,31 +25,31 @@ const LoginPage = () => {
     }, [user, router]);
 
     return (
-        <div className="bg-sky-100 flex h-screen justify-center items-center">
-            <form className="w-fit h-fit flex flex-col gap-6 bg-purple-300 rounded-lg p-6">
+        <div className="bg-sky-100 flex h-screen justify-center items-center text-responsive">
+            <form className="w-full max-w-120 h-fit flex flex-col gap-6 bg-purple-300 rounded-lg p-6 not-sm:m-4">
                 <span className="text-center block w-full">UIT - Cổng thông tin tuyển dụng</span>
-                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2">
+                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2 w-full">
                     <AiOutlineUser size={20} color="gray" />
                     <input
                         type="text"
                         placeholder="Tên đăng nhập"
-                        className="w-90 h-6 outline-none"
+                        className="w-full h-6 outline-none"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                     />
                 </div>
-                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2">
+                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2 w-full">
                     <AiOutlineLock size={20} color="gray" />
                     <input
                         type="password"
                         placeholder="Mật khẩu"
-                        className="w-90 h-6 outline-none"
+                        className="w-full h-6 outline-none"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     />
                 </div>
                 <button
                     onClick={handleLogin}
                     disabled={isLoading}
-                    className={`bg-blue-700 text-white font-semibold transition duration-200 hover:bg-blue-500 rounded-lg h-12 flex items-center justify-center gap-2 ${
+                    className={`bg-blue-700 text-white font-medium transition duration-200 hover:bg-blue-500 rounded-lg h-12 flex items-center justify-center gap-2 ${
                         isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
                     }`}>
                     {isLoading ? (

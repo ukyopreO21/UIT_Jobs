@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:5000"],
+        origin: ["http://localhost:5000", "http://192.168.100.57:5000", process.env.PUBLIC_URL],
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true,

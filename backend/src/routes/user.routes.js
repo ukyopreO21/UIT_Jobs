@@ -16,20 +16,26 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const data = req.body;
-        const { accessToken, refreshToken, ...result } = await UserService.login(data);
+        // ĐỪNG tách accessToken ra khỏi result, hãy giữ nó lại để trả về cho Client
+        const result = await UserService.login(data);
 
-        res.cookie("accessToken", accessToken, {
+        // Vẫn set cookie như một phương án dự phòng (hoặc nếu sau này dùng chung domain)
+        // NHƯNG QUAN TRỌNG: Bỏ thuộc tính "domain" đi để tránh lỗi mismatch domain
+        const cookieOptions = {
             httpOnly: true,
-            secure: false,
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: true, // Luôn true nếu chạy https (ngrok là https)
+            sameSite: "None", // Cần thiết nếu Front/Back khác domain
+            path: "/",
+        };
+
+        res.cookie("accessToken", result.accessToken, {
+            ...cookieOptions,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "Strict",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        res.cookie("refreshToken", result.refreshToken, {
+            ...cookieOptions,
+            maxAge: 30 * 24 * 60 * 60 * 1000,
         });
 
         return res.status(200).json(result);

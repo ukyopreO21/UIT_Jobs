@@ -26,7 +26,7 @@ const Breadcrumb = ({ items }: BreadcrumbProps) => {
                                     {item.label}
                                 </LoadingLink>
                             ) : (
-                                <span>{item.label}</span>
+                                <span className="text-responsive font-medium">{item.label}</span>
                             )}
 
                             {!isLast && <HiMiniChevronRight size={16} className="mx-2" />}

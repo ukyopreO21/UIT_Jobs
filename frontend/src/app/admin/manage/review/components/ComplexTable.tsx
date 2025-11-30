@@ -63,7 +63,7 @@ const ComplexTable = ({
                     {status.map((name) => (
                         <Tab
                             key={name}
-                            className="h-12 px-4 cursor-pointer tab-underline text-[#535458] data-selected:text-black">
+                            className="h-12 px-4 cursor-pointer tab-underline text-[#535458] data-selected:text-black overflow-hidden text-responsive">
                             {name} ({quantityPerStatus[name]})
                         </Tab>
                     ))}
@@ -89,7 +89,7 @@ const ComplexTable = ({
                                             <tr className="h-12 bg-[#f1f1f2]">
                                                 {colsToShow.map((col, index) => (
                                                     <th key={index} className="font-normal">
-                                                        <div className="px-4 text-[#535458]">
+                                                        <div className="px-4 text-[#535458] text-responsive">
                                                             {col}
                                                         </div>
                                                     </th>
@@ -106,7 +106,7 @@ const ComplexTable = ({
                                     </table>
                                 </div>
                             ) : (
-                                <div className="w-full h-full flex-1 flex items-center justify-center">
+                                <div className="w-full h-full flex-1 flex items-center justify-center text-responsive">
                                     Không tìm thấy hồ sơ nào.
                                 </div>
                             )}

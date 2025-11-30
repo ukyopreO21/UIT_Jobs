@@ -57,9 +57,9 @@ const ManagePagination = ({
     };
 
     return (
-        <div className="px-4 h-18 w-full flex justify-between items-center border-t border-[#e7e7e8]">
+        <div className="px-4 h-17 lg:h-18 w-full flex justify-between items-center border-t border-[#e7e7e8]">
             <div className="flex items-center gap-3">
-                <span>Số kết quả mỗi trang:</span>
+                <span className="text-responsive hidden md:block">Số kết quả mỗi trang:</span>
                 <Combobox<number>
                     value={Number(tempResultPerPage)}
                     onChange={(size) => {
@@ -118,15 +118,17 @@ const ManagePagination = ({
                     </div>
                 </Combobox>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center text-responsive">
                 <button
                     onClick={handleFirstPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out  h-10 flex justify-center items-center w-26 rounded-md cursor-pointer">
+                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out justify-center items-center rounded-md cursor-pointer
+								hidden md:flex h-9 lg:h-10 w-23 lg:w-26">
                     Trang đầu
                 </button>
                 <button
                     onClick={handlePrevPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out w-10 h-10 flex justify-center items-center rounded-md cursor-pointer">
+                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out flex justify-center items-center rounded-md cursor-pointer
+								 w-9 h-9 lg:w-10 lg:h-10">
                     <HiArrowLongLeft size={20} />
                 </button>
                 <input
@@ -138,22 +140,24 @@ const ManagePagination = ({
                     onBlur={(e) => {
                         handleCurrentPage(Number(e.currentTarget.value));
                     }}
-                    className="w-10 h-10 text-center rounded-md border border-[#e7e7e8] outline-none focus:border-2 focus:border-[#4263eb] transition duration-200 ease-in-out"
+                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md border border-[#e7e7e8] outline-none focus:border-2 focus:border-[#4263eb] transition duration-200 ease-in-out"
                 />
                 <span>/</span>
                 <input
                     disabled
                     value={totalPages}
-                    className="w-10 h-10 text-center rounded-md bg-[#f6f6f6] border border-[#e7e7e8] outline-none cursor-not-allowed"
+                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md bg-[#f6f6f6] border border-[#e7e7e8] outline-none cursor-not-allowed"
                 />
                 <button
                     onClick={handleNextPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out w-10 h-10 flex justify-center items-center rounded-md cursor-pointer">
+                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out flex justify-center items-center rounded-md cursor-pointer
+								w-9 h-9 lg:w-10 lg:h-10">
                     <HiArrowLongRight size={20} />
                 </button>
                 <button
                     onClick={handleLastPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out h-10 flex justify-center items-center w-26 rounded-md cursor-pointer">
+                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out justify-center items-center rounded-md cursor-pointer
+								hidden md:flex h-9 lg:h-10 w-23 lg:w-26">
                     Trang cuối
                 </button>
             </div>

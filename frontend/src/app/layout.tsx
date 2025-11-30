@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lexend, Montserrat } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -11,7 +11,7 @@ const lexendFont = Lexend({
     subsets: ["latin"],
 });
 
-const montserratFont = Montserrat({
+export const montserratFont = Montserrat({
     variable: "--font-montserrat",
     subsets: ["latin"],
 });
@@ -19,6 +19,14 @@ const montserratFont = Montserrat({
 export const metadata: Metadata = {
     title: "Cổng thông tin tuyển dụng - UIT",
     description: "",
+};
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    viewportFit: "cover",
+    themeColor: "#ffffff",
 };
 
 const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
@@ -31,7 +39,7 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
 
             <body className={`${lexendFont.variable} antialiased`}>
                 {children}
-                <Toaster position="top-right" />
+                <Toaster position="top-right" containerClassName="text-responsive" />
                 <GlobalLoader />
             </body>
         </html>

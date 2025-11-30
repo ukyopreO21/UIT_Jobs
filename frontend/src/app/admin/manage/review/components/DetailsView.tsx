@@ -48,10 +48,12 @@ const DetailsView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-20 right-4 w-160 rounded-lg overflow-hidden shadow-md">
+            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-18 right-4 md:w-160 rounded-lg overflow-hidden shadow-md not-md:left-4 text-responsive">
                 <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
                     <div className="flex flex-col gap-1">
-                        <span className="text-xl font-medium">#{applicationDetail?.id}</span>
+                        <span className="text-lg lg:text-xl font-medium">
+                            #{applicationDetail?.id}
+                        </span>
                         <span className="text-[#535458]">Mã hồ sơ</span>
                     </div>
                     <button className="cursor-pointer" onClick={() => toggleSideView(false)}>
@@ -64,8 +66,8 @@ const DetailsView = ({
 
                 <div className="flex flex-col grow overflow-y-auto">
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">CV</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">CV</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Thời gian nộp</span>
                             <span className="flex-1">
                                 {applicationDetail
@@ -73,39 +75,41 @@ const DetailsView = ({
                                     : ""}
                             </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Vị trí ứng tuyển</span>
                             <span className="flex-1">{applicationDetail?.position}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Đơn vị</span>
                             <span className="flex-1">{applicationDetail?.faculty}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Bộ môn</span>
                             <span className="flex-1">{applicationDetail?.discipline}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Link CV</span>
-                            <span className="flex-1">{applicationDetail?.applicant_cv}</span>
+                            <span className="flex-1 wrap-anywhere">
+                                {applicationDetail?.applicant_cv}
+                            </span>
                         </div>
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Nguyện vọng 2</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">Nguyện vọng 2</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Vị trí ứng tuyển</span>
                             <span className="flex-1">
                                 {applicationDetail?.second_choice_position}
                             </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Đơn vị</span>
                             <span className="flex-1">
                                 {applicationDetail?.second_choice_faculty}
                             </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Bộ môn</span>
                             <span className="flex-1">
                                 {applicationDetail?.second_choice_discipline}
@@ -114,8 +118,8 @@ const DetailsView = ({
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Hành động</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">Hành động</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Cập nhật mới nhất</span>
                             <span className="flex-1">
                                 {applicationDetail
@@ -123,11 +127,11 @@ const DetailsView = ({
                                     : ""}
                             </span>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex gap-2 items-center">
                             <span className="flex-1 text-[#535458]">Cập nhật trạng thái hồ sơ</span>
                             <span className="flex-1">
                                 <Listbox value={selectedStatus} onChange={setSelectedStatus}>
-                                    <ListboxButton className="flex justify-between items-center p-2 w-46 text-left border border-[#e7e7e8] rounded-md cursor-pointer">
+                                    <ListboxButton className="flex justify-between items-center p-2 w-35 sm:w-46 text-left border border-[#e7e7e8] rounded-md cursor-pointer">
                                         <span className={`${selectedStatus.color}`}>
                                             {selectedStatus.label}
                                         </span>
@@ -142,7 +146,7 @@ const DetailsView = ({
                                         leave="transition ease-in duration-100"
                                         leaveFrom="opacity-100 scale-100"
                                         leaveTo="opacity-0 scale-95">
-                                        <ListboxOptions className="z-10 mt-2 w-46 overflow-auto rounded-md bg-white text-base border border-[#e7e7e8] outline-none">
+                                        <ListboxOptions className="z-10 mt-2 w-35 sm:w-46 overflow-auto rounded-md bg-white text-base border border-[#e7e7e8] outline-none">
                                             {statusOptions.map((status, index) => (
                                                 <ListboxOption
                                                     key={index}
@@ -161,16 +165,16 @@ const DetailsView = ({
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Thông tin cá nhân</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">Thông tin cá nhân</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Họ và tên</span>
                             <span className="flex-1">{applicationDetail?.applicant_name}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Giới tính</span>
                             <span className="flex-1">{applicationDetail?.applicant_gender}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Ngày sinh</span>
                             <span className="flex-1">
                                 {applicationDetail
@@ -178,29 +182,31 @@ const DetailsView = ({
                                     : ""}
                             </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">CCCD/CMND</span>
                             <span className="flex-1">{applicationDetail?.applicant_id}</span>
                         </div>
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Thông tin liên lạc</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">Thông tin liên lạc</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Email</span>
-                            <span className="flex-1">{applicationDetail?.applicant_email}</span>
+                            <span className="flex-1 wrap-anywhere">
+                                {applicationDetail?.applicant_email}
+                            </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Số điện thoại</span>
                             <span className="flex-1">{applicationDetail?.applicant_phone}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Địa chỉ thường trú</span>
                             <span className="flex-1">
                                 {applicationDetail?.applicant_permanent_address}
                             </span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Địa chỉ liên hệ</span>
                             <span className="flex-1">
                                 {applicationDetail?.applicant_contact_address}
@@ -209,26 +215,26 @@ const DetailsView = ({
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Học vấn</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">Học vấn</span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">
                                 Trình độ chuyên môn cao nhất
                             </span>
                             <span className="flex-1">{applicationDetail?.applicant_degree}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Cơ sở đào tạo</span>
                             <span className="flex-1">{applicationDetail?.applicant_inst_name}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Ngành, chuyên ngành</span>
                             <span className="flex-1">{applicationDetail?.applicant_major}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Năm tốt nghiệp</span>
                             <span className="flex-1">{applicationDetail?.applicant_grad_year}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Xếp loại</span>
                             <span className="flex-1">
                                 {applicationDetail?.applicant_grad_grade}
@@ -237,12 +243,14 @@ const DetailsView = ({
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-lg">Trình độ Ngoại ngữ, Tin học</span>
-                        <div className="flex">
+                        <span className="font-medium text-base lg:text-lg">
+                            Trình độ Ngoại ngữ, Tin học
+                        </span>
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Ngoại ngữ</span>
                             <span className="flex-1">{applicationDetail?.applicant_lang_lvl}</span>
                         </div>
-                        <div className="flex">
+                        <div className="flex gap-2">
                             <span className="flex-1 text-[#535458]">Tin học</span>
                             <span className="flex-1">
                                 {applicationDetail?.applicant_it_prof_lvl}
@@ -251,7 +259,7 @@ const DetailsView = ({
                     </div>
 
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 shrink-0">
-                        <span className="font-medium text-lg">Ghi chú</span>
+                        <span className="font-medium text-base lg:text-lg">Ghi chú</span>
                         <span>{applicationDetail?.applicant_note || "Không có"}</span>
                     </div>
                 </div>

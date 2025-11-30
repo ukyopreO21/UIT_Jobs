@@ -35,7 +35,7 @@ const ReviewPage = () => {
     }, [findByFields]);
 
     return (
-        <div className="flex flex-col gap-6 h-full">
+        <div className="flex flex-col gap-4 h-full">
             <div className="h-10 flex items-center">
                 <Breadcrumb items={[{ label: "Hồ sơ" }]} />
             </div>

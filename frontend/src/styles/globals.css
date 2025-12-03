@@ -1,0 +1,23 @@
+@import "./common.css";
+@import "./admin.css";
+
+
+:root {
+	color: black;
+}
+
+/*
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
+} */
+
+body {
+	font-family: "Lexend", sans-serif;
+}
+
+button {
+	cursor: pointer !important;
+}

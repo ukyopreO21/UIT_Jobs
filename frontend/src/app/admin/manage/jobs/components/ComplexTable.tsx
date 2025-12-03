@@ -46,8 +46,8 @@ const ComplexTable = ({
     ];
 
     return (
-        <div className="flex-1 flex flex-col min-h-0 h-full border border-[#e7e7e8] bg-white rounded-md overflow-hidden">
-            <div className="px-4 h-17 lg:h-18 w-full flex justify-between items-center border-b border-[#e7e7e8]">
+        <div className="flex-1 flex flex-col min-h-0 h-full border border-primary-border bg-white rounded-md overflow-hidden">
+            <div className="px-4 h-17 lg:h-18 w-full flex-between-center border-b border-primary-border">
                 <ManageFilterButton
                     toggleSideView={() => toggleFiltersView(true)}
                     hasNoti={!isFieldsEmpty}
@@ -59,10 +59,10 @@ const ComplexTable = ({
                 <div className="flex-1 overflow-auto">
                     <table className="w-full">
                         <thead className="sticky top-0">
-                            <tr className="h-12 bg-[#f1f1f2]">
+                            <tr className="h-11 lg:h-12 bg-primary-bg-100">
                                 {colsToShow.map((col, index) => (
                                     <th key={index} className="font-normal">
-                                        <div className="px-4 text-[#535458] text-responsive">
+                                        <div className="px-4 text-primary-text text-default">
                                             {col}
                                         </div>
                                     </th>
@@ -79,7 +79,7 @@ const ComplexTable = ({
                     </table>
                 </div>
             ) : (
-                <div className="w-full h-full flex-1 flex items-center justify-center text-responsive">
+                <div className="w-full h-full flex-1 flex-center text-default">
                     Không tìm thấy việc làm nào.
                 </div>
             )}

@@ -1,7 +1,7 @@
 import { AiOutlineForm, AiOutlineHome } from "react-icons/ai";
 import { HiOutlineBriefcase } from "react-icons/hi2";
 import { usePathname } from "next/navigation";
-import LoadingLink from "@/components/LoadingLink";
+import Link from "@/components/LoadingLink";
 
 const ManageBottomNavigation = () => {
     const pathname = usePathname();
@@ -32,21 +32,21 @@ const ManageBottomNavigation = () => {
     ];
 
     return (
-        <div className="flex w-full border-t border-[#e7e7e8] bg-white h-16 pt-2 pb-4 px-4 lg:hidden">
+        <div className="flex w-full border-t border-primary-border bg-white h-16 pt-2 pb-4 px-4 lg:hidden">
             {menuItems.map((item) => {
                 const active = isActive(item.path);
                 return (
-                    <LoadingLink
+                    <Link
                         key={item.path}
                         href={item.path}
-                        className={`flex-1 flex flex-col gap-1 justify-center items-center text-xs transition-colors
-                            ${active ? "text-blue-600 font-medium" : "text-gray-500"}
+                        className={`flex-1 flex-center flex-col gap-1 text-xs transition
+                            ${active ? "text-secondary-blue-dark font-medium" : "text-primary-text"}
                         `}>
-                        <span className={active ? "text-blue-600" : "text-gray-500"}>
+                        <span className={active ? "text-secondary-blue-dark" : "text-primary-text"}>
                             {item.icon}
                         </span>
                         <span>{item.label}</span>
-                    </LoadingLink>
+                    </Link>
                 );
             })}
         </div>

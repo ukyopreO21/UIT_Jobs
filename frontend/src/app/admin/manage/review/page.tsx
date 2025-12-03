@@ -35,8 +35,8 @@ const ReviewPage = () => {
     }, [findByFields]);
 
     return (
-        <div className="flex flex-col gap-4 h-full">
-            <div className="h-10 flex items-center">
+        <div className="admin-page-layout-default">
+            <div className="admin-page-first-container-default">
                 <Breadcrumb items={[{ label: "Hồ sơ" }]} />
             </div>
 

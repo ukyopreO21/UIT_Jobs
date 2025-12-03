@@ -32,7 +32,6 @@ const ManagePagination = ({
     handleNextPage: () => void;
     handleLastPage: () => void;
 }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
     const [tempCurrentPage, setTempCurrentPage] = useState<number>(1);
     const [tempResultPerPage, setTempResultPerPage] = useState<string>(String(resultPerPage));
 
@@ -57,9 +56,9 @@ const ManagePagination = ({
     };
 
     return (
-        <div className="px-4 h-17 lg:h-18 w-full flex justify-between items-center border-t border-[#e7e7e8]">
-            <div className="flex items-center gap-3">
-                <span className="text-responsive hidden md:block">Số kết quả mỗi trang:</span>
+        <div className="px-4 h-17 lg:h-18 w-full flex-between-center border-t border-primary-border">
+            <div className="flex-center gap-3">
+                <span className="text-default hidden xl:block">Số kết quả mỗi trang:</span>
                 <Combobox<number>
                     value={Number(tempResultPerPage)}
                     onChange={(size) => {
@@ -69,12 +68,12 @@ const ManagePagination = ({
                     }}
                     immediate>
                     <div className="relative">
-                        <div className="flex w-16 h-10 rounded-sm border-none outline-1 outline-[#e7e7e8] focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out">
+                        <div className="flex h-9 lg:h-10 w-14 lg:w-16 rounded-md input-container-outline-default transition-default">
                             <ComboboxInput
                                 ref={resultPerPageInputRef}
                                 displayValue={() => tempResultPerPage}
                                 value={tempResultPerPage}
-                                className="w-full text-center outline-none"
+                                className="w-full text-center text-default outline-none"
                                 onChange={(e) => {
                                     const raw = e.currentTarget.value;
                                     if (/^\d*$/.test(raw)) {
@@ -104,12 +103,12 @@ const ManagePagination = ({
                             leave="transition ease-in duration-200"
                             leaveFrom="opacity-100 translate-y-0 scale-100"
                             leaveTo="opacity-0 translate-y-2 scale-95">
-                            <ComboboxOptions className="absolute bottom-full mb-2 w-16 overflow-auto rounded-sm bg-white focus:border-none z-10 border border-[#e7e7e8]">
+                            <ComboboxOptions className="absolute bottom-full mb-2 w-16 overflow-auto rounded-md bg-white focus:border-none z-10 border border-primary-border">
                                 {pageSizes.map((size) => (
                                     <ComboboxOption
                                         key={size}
                                         value={size}
-                                        className="cursor-pointer hover:bg-[#dbe4ff] px-3 py-1">
+                                        className="cursor-pointer hover:bg-secondary-blue-light transition-default px-3 py-1 text-default">
                                         {size}
                                     </ComboboxOption>
                                 ))}
@@ -118,18 +117,20 @@ const ManagePagination = ({
                     </div>
                 </Combobox>
             </div>
-            <div className="flex gap-2 items-center text-responsive">
+            <div className="flex gap-2 items-center text-default">
                 <button
                     onClick={handleFirstPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out justify-center items-center rounded-md cursor-pointer
-								hidden md:flex h-9 lg:h-10 w-23 lg:w-26">
+                    className="bg-primary-bg border border-primary-border hover:bg-secondary-blue-light hover:border-secondary-blue-light hover:text-secondary-blue-dark-extra
+								transition-default button-default text-default rounded-md
+								not-md:hidden md:flex-center">
                     Trang đầu
                 </button>
                 <button
                     onClick={handlePrevPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out flex justify-center items-center rounded-md cursor-pointer
-								 w-9 h-9 lg:w-10 lg:h-10">
-                    <HiArrowLongLeft size={20} />
+                    className="bg-primary-bg border border-primary-border hover:bg-secondary-blue-light hover:border-secondary-blue-light hover:text-secondary-blue-dark-extra
+								transition-default rounded-md
+								flex-center w-9 h-9 lg:w-10 lg:h-10">
+                    <HiArrowLongLeft className="icon-default" />
                 </button>
                 <input
                     value={tempCurrentPage}
@@ -140,24 +141,26 @@ const ManagePagination = ({
                     onBlur={(e) => {
                         handleCurrentPage(Number(e.currentTarget.value));
                     }}
-                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md border border-[#e7e7e8] outline-none focus:border-2 focus:border-[#4263eb] transition duration-200 ease-in-out"
+                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md input-container-outline-default transition-default"
                 />
                 <span>/</span>
                 <input
                     disabled
                     value={totalPages}
-                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md bg-[#f6f6f6] border border-[#e7e7e8] outline-none cursor-not-allowed"
+                    className="w-9 h-9 lg:w-10 lg:h-10 text-center rounded-md input-container-outline-default transition-default cursor-not-allowed"
                 />
                 <button
                     onClick={handleNextPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out flex justify-center items-center rounded-md cursor-pointer
-								w-9 h-9 lg:w-10 lg:h-10">
-                    <HiArrowLongRight size={20} />
+                    className="bg-primary-bg border border-primary-border hover:bg-secondary-blue-light hover:border-secondary-blue-light hover:text-secondary-blue-dark-extra
+								transition-default rounded-md
+								flex-center w-9 h-9 lg:w-10 lg:h-10">
+                    <HiArrowLongRight className="icon-default" />
                 </button>
                 <button
                     onClick={handleLastPage}
-                    className="bg-[#f6f6f6] border border-[#e7e7e8] hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out justify-center items-center rounded-md cursor-pointer
-								hidden md:flex h-9 lg:h-10 w-23 lg:w-26">
+                    className="bg-primary-bg border border-primary-border hover:bg-secondary-blue-light hover:border-secondary-blue-light hover:text-secondary-blue-dark-extra
+								transition-default button-default text-default rounded-md
+								not-md:hidden md:flex-center">
                     Trang cuối
                 </button>
             </div>

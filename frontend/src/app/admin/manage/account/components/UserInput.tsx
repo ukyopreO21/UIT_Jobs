@@ -16,31 +16,29 @@ const UserInput = ({ label, name, value, type = "text", onChange }: UserInputPro
 
     return (
         <div className="flex flex-col gap-2">
-            <label className="text-[#535458] text-responsive">{label}</label>
-            <div
-                className="flex items-center h-10 outline-1 outline-[#e7e7e8] px-2 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out rounded-md
-                xl:w-90 text-responsive">
+            <label className="text-primary-text text-default">{label}</label>
+            <div className="input-container-default input-container-outline-default text-default transition-default xl:w-90">
                 <input
                     name={name}
                     type={currentType}
                     value={value}
-                    className="w-full border-none outline-none"
+                    className="input-text-default"
                     onChange={onChange}
                 />
 
                 {isPasswordField ? (
                     <button
-                        className="cursor-pointer hover:text-[#4263eb] transition duration-200 ease-in-out flex items-center justify-center"
+                        className="flex-center h-full transition-default hover:text-secondary-text-dark"
                         type="button"
                         onClick={() => setShowPassword((prev) => !prev)}>
                         {showPassword ? (
-                            <AiOutlineEyeInvisible className="icon-responsive" />
+                            <AiOutlineEyeInvisible className="icon-default" />
                         ) : (
-                            <AiOutlineEye className="icon-responsive" />
+                            <AiOutlineEye className="icon-default" />
                         )}
                     </button>
                 ) : (
-                    <AiOutlineEdit className="icon-responsive" />
+                    <AiOutlineEdit className="icon-default" />
                 )}
             </div>
         </div>

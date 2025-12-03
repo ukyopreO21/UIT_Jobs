@@ -2,9 +2,10 @@ import { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { Lexend, Montserrat } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import "./globals.css";
+import "@/styles/globals.css";
 
 import GlobalLoader from "@/components/GlobalLoader";
+import NavigationEvents from "@/components/NavigationEvents";
 
 const lexendFont = Lexend({
     variable: "--font-lexend",
@@ -39,8 +40,9 @@ const RootLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
 
             <body className={`${lexendFont.variable} antialiased`}>
                 {children}
-                <Toaster position="top-right" containerClassName="text-responsive" />
+                <Toaster position="top-right" containerClassName="text-default" />
                 <GlobalLoader />
+                <NavigationEvents />
             </body>
         </html>
     );

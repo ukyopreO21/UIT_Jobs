@@ -1,6 +1,7 @@
 import { useState, Fragment } from "react";
 import { Transition } from "@headlessui/react";
-import { AiOutlineClose } from "react-icons/ai";
+import ManageViewHeader from "../../components/ManageViewHeader";
+import ManageViewFooter from "../../components/ManageViewFooter";
 import useAdminJobStore from "@/stores/admin-job.store";
 import useAvailableFiltersStore from "@/stores/available-filters.store";
 
@@ -98,25 +99,18 @@ const FiltersView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] top-18 right-4 not-md:left-4 md:w-120 rounded-lg overflow-hidden h-fit max-h-[calc(100dvh-9.5rem)] lg:max-h-[calc(100dvh-5.5rem)] shadow-md text-responsive">
-                <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-lg lg:text-xl font-medium">Bộ lọc</span>
-                        <span className="text-[#535458]">Điều chỉnh</span>
-                    </div>
-                    <button className="cursor-pointer" onClick={() => toggleSideView(false)}>
-                        <AiOutlineClose
-                            size={20}
-                            className="transition duration-200 ease-in-out hover:text-[#4263eb]"
-                        />
-                    </button>
-                </div>
+            <div className="admin-page-side-view-default text-default">
+                <ManageViewHeader
+                    title="Bộ lọc"
+                    subTitle="Điều chỉnh"
+                    toggleSideView={toggleSideView}
+                />
 
                 <div className="flex flex-col flex-1 overflow-y-auto">
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
+                    <div className="admin-page-side-view-part-default">
                         <span className="font-medium text-lg">Hạn chót</span>
                         <div className="flex">
-                            <span className="flex-1 text-[#535458]">Từ ngày</span>
+                            <span className="flex-1 text-primary-text">Từ ngày</span>
                             <input
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
@@ -125,7 +119,7 @@ const FiltersView = ({
                             />
                         </div>
                         <div className="flex">
-                            <span className="flex-1 text-[#535458]">Đến ngày</span>
+                            <span className="flex-1 text-primary-text">Đến ngày</span>
                             <input
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
@@ -135,11 +129,11 @@ const FiltersView = ({
                         </div>
                     </div>
 
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
+                    <div className="admin-page-side-view-part-default">
                         <span className="font-medium text-lg">Vị trí ứng tuyển</span>
                         {availableFilterValues.positions.map((position) => (
                             <div key={position} className="flex">
-                                <span className="text-[#535458] flex-1">- {position}</span>
+                                <span className="flex-1 text-primary-text">- {position}</span>
                                 <input
                                     type="checkbox"
                                     checked={!!checkedPositions[position]}
@@ -149,13 +143,14 @@ const FiltersView = ({
                         ))}
                     </div>
 
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 shrink-0">
+                    <div className="admin-page-side-view-part-default border-none">
                         <span className="font-medium text-lg">Đơn vị tuyển dụng</span>
-
                         {availableFilterValues.faculties.map((faculty) => (
                             <div key={faculty.name} className="flex flex-col gap-3">
                                 <div className="flex items-center">
-                                    <span className="flex-1 text-[#535458]">- {faculty.name}</span>
+                                    <span className="flex-1 text-primary-text">
+                                        - {faculty.name}
+                                    </span>
                                     <input
                                         type="checkbox"
                                         checked={!!checkedFaculties[faculty.name]}
@@ -169,7 +164,7 @@ const FiltersView = ({
                                             <div
                                                 key={discipline}
                                                 className="flex gap-10 items-center">
-                                                <span className="flex-1 text-[#535458]">
+                                                <span className="flex-1 text-primary-text">
                                                     + {discipline}
                                                 </span>
                                                 <input
@@ -191,23 +186,14 @@ const FiltersView = ({
                     </div>
                 </div>
 
-                <div className="flex justify-between items-center border-t border-[#e7e7e8] h-18 ml-4 pr-4 shrink-0">
-                    <button
-                        className="px-3 h-10 bg-red-200/75 text-red-700 rounded-lg transition duration-200 ease-in-out cursor-pointer"
-                        onClick={() => {
-                            toggleSideView(false);
-                        }}>
-                        Thoát
-                    </button>
-                    <button
-                        onClick={() => {
-                            updateFields();
-                            toggleSideView(false);
-                        }}
-                        className="px-3 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer">
-                        Cập nhật bộ lọc
-                    </button>
-                </div>
+                <ManageViewFooter
+                    toggleSideView={toggleSideView}
+                    handleChange={() => {
+                        updateFields();
+                        toggleSideView(false);
+                    }}
+                    handleChangeTitle="Cập nhật bộ lọc"
+                />
             </div>
         </Transition>
     );

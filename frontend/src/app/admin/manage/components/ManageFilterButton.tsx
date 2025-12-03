@@ -9,14 +9,14 @@ const ManageFilterButton = ({
 }) => {
     return (
         <button
-            className="relative flex justify-center items-center rounded-md border bg-[#f6f6f6] border-[#e7e7e8] gap-2 cursor-pointer
+            className="relative flex-center rounded-md border bg-primary-bg border-primary-border gap-3 cursor-pointer
 			w-9 sm:w-fit h-9 lg:h-10 px-0 sm:px-3
-			hover:bg-[#dbe4ff] hover:border-[#dbe4ff] hover:text-[#4263eb] transition duration-200 ease-in-out"
+			hover:bg-secondary-blue-light hover:border-secondary-blue-light hover:text-secondary-blue-dark-extra transition-default"
             onClick={() => toggleSideView()}>
-            <VscFilter className="icon-responsive flex" />
-            <span className="hidden sm:block text-responsive">Tạo bộ lọc</span>
+            <VscFilter className="icon-default" />
+            <span className="hidden sm:block text-default">Tạo bộ lọc</span>
             {hasNoti && (
-                <div className="absolute top-0 right-0 w-2.5 h-2.5 translate-x-1.25 -translate-y-1.25 rounded-full bg-[#4263eb]"></div>
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 translate-x-1.25 -translate-y-1.25 rounded-full bg-secondary-blue-dark"></div>
             )}
         </button>
     );

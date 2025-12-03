@@ -33,7 +33,7 @@ const TableRows = ({
                                 <div className="px-4 py-2 text-center">
                                     {col === "status" ? (
                                         <span
-                                            className={`p-2 rounded-lg inline-block text-responsive ${
+                                            className={`p-2 rounded-lg inline-block text-default ${
                                                 statusOptions.find(
                                                     (option) => option.label === value
                                                 )?.color ?? ""
@@ -46,14 +46,14 @@ const TableRows = ({
                                         </span>
                                     ) : col === "created_at" || col === "updated_at" ? (
                                         value ? (
-                                            <span className="text-responsive">
+                                            <span className="text-default">
                                                 {formatDatetime(value)}
                                             </span>
                                         ) : (
                                             ""
                                         )
                                     ) : (
-                                        <span className="text-responsive">{value ?? ""}</span>
+                                        <span className="text-default">{value ?? ""}</span>
                                     )}
                                 </div>
                             </td>
@@ -67,9 +67,9 @@ const TableRows = ({
                                     toggleSideView();
                                 }}
                                 className="rounded-md flex justify-center items-center cursor-pointer
-										bg-[#dbe4ff] border-[#4263eb] transition duration-200 ease-in-out hover:bg-[#4263eb] text-[#4263eb] hover:text-[#dbe4ff]
+										bg-secondary-bg-light border-[#4263eb] transition duration-200 ease-in-out hover:bg-secondary-bg-extra-light text-secondary-text-dark hover:text-secondary-text-light
 										h-9 w-9 lg:h-10 lg:w-10">
-                                <AiOutlineFileText className="icon-responsive" />
+                                <AiOutlineFileText className="icon-default" />
                             </button>
                         </div>
                     </td>

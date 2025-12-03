@@ -3,7 +3,7 @@
 import useUserStore from "@/stores/user.store";
 import User from "@/types/User";
 import { ReactNode } from "react";
-import ManageMenu from "./components/ManageMenu";
+import ManageNavigation from "./components/ManageNavigation";
 import ManageUserButton from "./components/ManageUserButton";
 import ManageBottomNavigation from "./components/ManageBottomNavigation";
 
@@ -13,9 +13,9 @@ export default function ManageLayout({ children }: { children: ReactNode }) {
     return (
         <div className="w-screen h-dvh flex flex-col lg:flex-row">
             {/* --- SIDEBAR (PC) --- */}
-            <div className="w-fit h-full bg-white p-4 flex-col gap-12 border-r border-[#e7e7e8] hidden lg:flex">
+            <div className="w-fit h-full bg-white p-4 flex-col gap-12 border-r border-primary-border hidden lg:flex">
                 <div className="font-bold text-[24px] text-center font-[montserrat]">UIT Jobs</div>
-                <ManageMenu />
+                <ManageNavigation />
                 <ManageUserButton user={user} />
             </div>
 

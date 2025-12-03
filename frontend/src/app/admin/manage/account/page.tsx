@@ -18,6 +18,7 @@ const Account = () => {
         email: "",
         phone: "",
     });
+
     const [passwordForm, setPasswordForm] = useState({
         currentPassword: "",
         newPassword: "",
@@ -86,23 +87,26 @@ const Account = () => {
     }, [user]);
 
     return (
-        <div className="flex flex-col gap-4 h-full">
-            <div className="h-10 shrink-0 flex justify-between items-center">
+        <div className="admin-page-layout-default">
+            <div className="admin-page-first-container-default">
                 <Breadcrumb items={[{ label: "Thông tin tài khoản" }]} />
                 <button
-                    className="flex items-center gap-2 button-responsive rounded-md cursor-pointer bg-red-200/75 text-red-700 lg:hidden"
+                    className="flex items-center gap-2 rounded-md 
+								button-default text-default transition-default
+								bg-secondary-red-light hover:bg-secondary-red-light-extra text-secondary-red-dark hover:text-secondary-red-dark-extra
+								lg:hidden"
                     onClick={handleLogout}>
-                    <HiOutlineArrowLeftOnRectangle className="icon-responsive" />
+                    <HiOutlineArrowLeftOnRectangle className="icon-default" />
                     Đăng xuất
                 </button>
             </div>
             <div className="flex flex-col md:flex-row h-fit gap-4">
-                <div className="flex-1 flex flex-col h-fit p-4 border border-[#e7e7e8] bg-white rounded-md gap-4">
-                    <div className="text-responsive">Thông tin cá nhân</div>
+                <div className="flex-1 flex flex-col h-fit p-4 border border-primary-border bg-white rounded-md gap-4">
+                    <div className="text-default">Thông tin cá nhân</div>
                     <div className="flex flex-col gap-10">
                         <div className="flex flex-col gap-3 items-center">
                             <div className="w-30 h-30 lg:w-48 lg:h-48 bg-gray-200 rounded-full"></div>
-                            <div className="text-responsive">@{user?.username}</div>
+                            <div className="text-default">@{user?.username}</div>
                         </div>
                         <div className="flex-1 flex flex-col gap-4">
                             <UserInput
@@ -126,21 +130,21 @@ const Account = () => {
                         </div>
                     </div>
 
-                    <div className="self-end flex gap-4">
+                    <div className="self-end flex gap-4 mt-4">
                         <button
-                            className="self-end bg-green-200/75 text-green-700 rounded-md mt-4 transition duration-200 ease-in-out cursor-pointer button-responsive"
+                            className="self-end bg-secondary-red-light hover:bg-secondary-red-light-extra text-secondary-red-dark hover:text-secondary-red-dark-extra rounded-md transition-default button-default text-default"
                             onClick={handleResetInfo}>
                             Xoá thay đổi
                         </button>
                         <button
-                            className="self-end bg-[#4263eb] text-white rounded-md mt-4 hover:bg-[#365ac0] transition duration-200 ease-in-out cursor-pointer button-responsive"
+                            className="self-end bg-secondary-blue-light hover:bg-secondary-blue-light-extra text-secondary-blue-dark hover:text-secondary-blue-dark-extra rounded-md transition-default button-default text-default"
                             onClick={handleChangeInfo}>
                             Lưu thay đổi
                         </button>
                     </div>
                 </div>
-                <div className="flex-1 flex flex-col h-fit p-4 border border-[#e7e7e8] bg-white rounded-md gap-4 mb-4 lg:mb-0">
-                    <div className="text-responsive">Đổi mật khẩu</div>
+                <div className="flex-1 flex flex-col h-fit p-4 border border-primary-border bg-white rounded-md gap-4 mb-4 lg:mb-0">
+                    <div className="text-default">Đổi mật khẩu</div>
                     <div className="flex-1 flex flex-col gap-4">
                         <UserInput
                             name="currentPassword"
@@ -165,7 +169,7 @@ const Account = () => {
                         />
                     </div>
                     <button
-                        className="self-end bg-[#4263eb] text-white rounded-md mt-4 hover:bg-[#365ac0] transition duration-200 ease-in-out cursor-pointer button-responsive"
+                        className="self-end bg-secondary-blue-light hover:bg-secondary-blue-light-extra text-secondary-blue-dark hover:text-secondary-blue-dark-extra rounded-md mt-4 transition-default button-default text-default"
                         onClick={handleChangePassword}>
                         Đổi mật khẩu
                     </button>

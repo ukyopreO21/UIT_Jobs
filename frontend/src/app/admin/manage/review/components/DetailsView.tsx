@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
-import { AiOutlineClose } from "react-icons/ai";
+import ManageViewHeader from "../../components/ManageViewHeader";
+import ManageViewFooter from "../../components/ManageViewFooter";
 import { formatDate, formatDatetime } from "@/utils/format-date";
 import {
     Listbox,
@@ -10,6 +11,88 @@ import {
 } from "@headlessui/react";
 import { HiMiniChevronUpDown } from "react-icons/hi2";
 import useAdminApplicationStore from "@/stores/admin-application.store";
+
+const fieldNamesMap: { [key: string]: string } = {
+    applicant_id: "CCCD/CMND",
+    applicant_name: "Họ và tên",
+    applicant_dob: "Ngày sinh",
+    applicant_gender: "Giới tính",
+    applicant_email: "Email",
+    applicant_phone: "Số điện thoại",
+    applicant_permanent_address: "Địa chỉ thường trú",
+    applicant_contact_address: "Địa chỉ liên hệ",
+    second_choice_position: "Vị trí ứng tuyển",
+    second_choice_faculty: "Đơn vị",
+    second_choice_discipline: "Bộ môn",
+    applicant_degree: "Trình độ chuyên môn cao nhất",
+    applicant_inst_name: "Cơ sở đào tạo",
+    applicant_major: "Ngành, chuyên ngành",
+    applicant_grad_year: "Năm tốt nghiệp",
+    applicant_grad_grade: "Xếp loại",
+    applicant_lang_lvl: "Ngoại ngữ",
+    applicant_it_prof_lvl: "Tin học",
+    applicant_cv: "Link CV",
+    applicant_note: "Ghi chú",
+    status: "Cập nhật trạng thái hồ sơ",
+    created_at: "Thời gian nộp",
+    updated_at: "Cập nhật mới nhất",
+    position: "Vị trí ứng tuyển",
+    faculty: "Đơn vị",
+    discipline: "Bộ môn",
+};
+
+const viewParts = [
+    {
+        label: "CV",
+        fields: ["created_at", "position", "faculty", "discipline", "applicant_cv"],
+    },
+    {
+        label: "Nguyện vọng 2",
+        fields: ["second_choice_position", "second_choice_faculty", "second_choice_discipline"],
+    },
+    {
+        label: "Hành động",
+        fields: ["updated_at", "status"],
+    },
+    {
+        label: "Thông tin cá nhân",
+        fields: ["applicant_name", "applicant_gender", "applicant_dob", "applicant_id"],
+    },
+    {
+        label: "Thông tin liên lạc",
+        fields: [
+            "applicant_email",
+            "applicant_phone",
+            "applicant_permanent_address",
+            "applicant_contact_address",
+        ],
+    },
+    {
+        label: "Học vấn",
+        fields: [
+            "applicant_degree",
+            "applicant_inst_name",
+            "applicant_major",
+            "applicant_grad_year",
+            "applicant_grad_grade",
+        ],
+    },
+    {
+        label: "Trình độ Ngoại ngữ, Tin học",
+        fields: ["applicant_lang_lvl", "applicant_it_prof_lvl"],
+    },
+    {
+        label: "Ghi chú",
+        fields: ["applicant_note"],
+    },
+];
+
+const statusOptions = [
+    { label: "Đã ghi nhận", color: "text-secondary-blue-dark" },
+    { label: "Đang phỏng vấn", color: "text-secondary-yellow-dark" },
+    { label: "Được tuyển dụng", color: "text-secondary-green-dark" },
+    { label: "Bị từ chối", color: "text-secondary-red-dark" },
+];
 
 const DetailsView = ({
     toggleSideView,
@@ -22,13 +105,6 @@ const DetailsView = ({
     const updateById = useAdminApplicationStore((state) => state.updateById);
 
     const [selectedStatus, setSelectedStatus] = useState(Object || null);
-
-    const statusOptions = [
-        { label: "Đã ghi nhận", color: "text-sky-700" },
-        { label: "Đang phỏng vấn", color: "text-yellow-700" },
-        { label: "Được tuyển dụng", color: "text-green-700" },
-        { label: "Bị từ chối", color: "text-red-700" },
-    ];
 
     useEffect(() => {
         setSelectedStatus({
@@ -48,236 +124,89 @@ const DetailsView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-18 right-4 md:w-160 rounded-lg overflow-hidden shadow-md not-md:left-4 text-responsive">
-                <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-lg lg:text-xl font-medium">
-                            #{applicationDetail?.id}
-                        </span>
-                        <span className="text-[#535458]">Mã hồ sơ</span>
-                    </div>
-                    <button className="cursor-pointer" onClick={() => toggleSideView(false)}>
-                        <AiOutlineClose
-                            size={20}
-                            className="transition duration-200 ease-in-out hover:text-[#4263eb]"
-                        />
-                    </button>
-                </div>
+            <div className="admin-page-side-view-default text-default">
+                <ManageViewHeader
+                    title={`#${applicationDetail?.id}`}
+                    subTitle="Mã hồ sơ"
+                    toggleSideView={toggleSideView}
+                />
 
+                {/* đặt border-none cho cái part cuối */}
                 <div className="flex flex-col grow overflow-y-auto">
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">CV</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Thời gian nộp</span>
-                            <span className="flex-1">
-                                {applicationDetail
-                                    ? formatDatetime(applicationDetail.created_at)
-                                    : ""}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Vị trí ứng tuyển</span>
-                            <span className="flex-1">{applicationDetail?.position}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Đơn vị</span>
-                            <span className="flex-1">{applicationDetail?.faculty}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Bộ môn</span>
-                            <span className="flex-1">{applicationDetail?.discipline}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Link CV</span>
-                            <span className="flex-1 wrap-anywhere">
-                                {applicationDetail?.applicant_cv}
-                            </span>
-                        </div>
-                    </div>
+                    {viewParts.map((part, index) => (
+                        <div key={index} className="admin-page-side-view-part-default">
+                            <span className="font-medium text-base lg:text-lg">{part.label}</span>
+                            {part.fields.map((field) => (
+                                <div key={field} className="flex gap-2">
+                                    <span className="flex-1 text-primary-text">
+                                        {fieldNamesMap[field] || field}
+                                    </span>
+                                    <span className="flex-1">
+                                        {field === "applicant_dob" ||
+                                        field === "created_at" ||
+                                        field === "updated_at" ? (
+                                            applicationDetail ? (
+                                                formatDate(
+                                                    applicationDetail[
+                                                        field as keyof typeof applicationDetail
+                                                    ]
+                                                )
+                                            ) : (
+                                                ""
+                                            )
+                                        ) : field === "status" ? (
+                                            applicationDetail ? (
+                                                <Listbox
+                                                    value={selectedStatus}
+                                                    onChange={setSelectedStatus}>
+                                                    <ListboxButton className="flex justify-between items-center p-2 w-35 sm:w-46 text-left border border-primary-border rounded-md cursor-pointer">
+                                                        <span className={`${selectedStatus.color}`}>
+                                                            {selectedStatus.label}
+                                                        </span>
+                                                        <HiMiniChevronUpDown size={20} />
+                                                    </ListboxButton>
 
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Nguyện vọng 2</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Vị trí ứng tuyển</span>
-                            <span className="flex-1">
-                                {applicationDetail?.second_choice_position}
-                            </span>
+                                                    <Transition
+                                                        as={Fragment}
+                                                        enter="transition ease-out duration-100"
+                                                        enterFrom="opacity-0 scale-95"
+                                                        enterTo="opacity-100 scale-100"
+                                                        leave="transition ease-in duration-100"
+                                                        leaveFrom="opacity-100 scale-100"
+                                                        leaveTo="opacity-0 scale-95">
+                                                        <ListboxOptions className="z-10 mt-2 w-35 sm:w-46 overflow-auto rounded-md bg-white text-base border border-primary-border outline-none">
+                                                            {statusOptions.map((status, index) => (
+                                                                <ListboxOption
+                                                                    key={index}
+                                                                    value={status}
+                                                                    className="text-default p-2 data-focus:bg-gray-100">
+                                                                    <span
+                                                                        className={`${status.color}`}>
+                                                                        {status.label}
+                                                                    </span>
+                                                                </ListboxOption>
+                                                            ))}
+                                                        </ListboxOptions>
+                                                    </Transition>
+                                                </Listbox>
+                                            ) : null
+                                        ) : applicationDetail ? (
+                                            applicationDetail[
+                                                field as keyof typeof applicationDetail
+                                            ]
+                                        ) : null}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Đơn vị</span>
-                            <span className="flex-1">
-                                {applicationDetail?.second_choice_faculty}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Bộ môn</span>
-                            <span className="flex-1">
-                                {applicationDetail?.second_choice_discipline}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Hành động</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Cập nhật mới nhất</span>
-                            <span className="flex-1">
-                                {applicationDetail
-                                    ? formatDatetime(applicationDetail.updated_at)
-                                    : ""}
-                            </span>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                            <span className="flex-1 text-[#535458]">Cập nhật trạng thái hồ sơ</span>
-                            <span className="flex-1">
-                                <Listbox value={selectedStatus} onChange={setSelectedStatus}>
-                                    <ListboxButton className="flex justify-between items-center p-2 w-35 sm:w-46 text-left border border-[#e7e7e8] rounded-md cursor-pointer">
-                                        <span className={`${selectedStatus.color}`}>
-                                            {selectedStatus.label}
-                                        </span>
-                                        <HiMiniChevronUpDown size={20} />
-                                    </ListboxButton>
-
-                                    <Transition
-                                        as={Fragment}
-                                        enter="transition ease-out duration-100"
-                                        enterFrom="opacity-0 scale-95"
-                                        enterTo="opacity-100 scale-100"
-                                        leave="transition ease-in duration-100"
-                                        leaveFrom="opacity-100 scale-100"
-                                        leaveTo="opacity-0 scale-95">
-                                        <ListboxOptions className="z-10 mt-2 w-35 sm:w-46 overflow-auto rounded-md bg-white text-base border border-[#e7e7e8] outline-none">
-                                            {statusOptions.map((status, index) => (
-                                                <ListboxOption
-                                                    key={index}
-                                                    value={status}
-                                                    className="cursor-pointer p-2 data-focus:bg-gray-100">
-                                                    <span className={`${status.color}`}>
-                                                        {status.label}
-                                                    </span>
-                                                </ListboxOption>
-                                            ))}
-                                        </ListboxOptions>
-                                    </Transition>
-                                </Listbox>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Thông tin cá nhân</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Họ và tên</span>
-                            <span className="flex-1">{applicationDetail?.applicant_name}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Giới tính</span>
-                            <span className="flex-1">{applicationDetail?.applicant_gender}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Ngày sinh</span>
-                            <span className="flex-1">
-                                {applicationDetail
-                                    ? formatDate(applicationDetail.applicant_dob)
-                                    : ""}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">CCCD/CMND</span>
-                            <span className="flex-1">{applicationDetail?.applicant_id}</span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Thông tin liên lạc</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Email</span>
-                            <span className="flex-1 wrap-anywhere">
-                                {applicationDetail?.applicant_email}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Số điện thoại</span>
-                            <span className="flex-1">{applicationDetail?.applicant_phone}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Địa chỉ thường trú</span>
-                            <span className="flex-1">
-                                {applicationDetail?.applicant_permanent_address}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Địa chỉ liên hệ</span>
-                            <span className="flex-1">
-                                {applicationDetail?.applicant_contact_address}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Học vấn</span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">
-                                Trình độ chuyên môn cao nhất
-                            </span>
-                            <span className="flex-1">{applicationDetail?.applicant_degree}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Cơ sở đào tạo</span>
-                            <span className="flex-1">{applicationDetail?.applicant_inst_name}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Ngành, chuyên ngành</span>
-                            <span className="flex-1">{applicationDetail?.applicant_major}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Năm tốt nghiệp</span>
-                            <span className="flex-1">{applicationDetail?.applicant_grad_year}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Xếp loại</span>
-                            <span className="flex-1">
-                                {applicationDetail?.applicant_grad_grade}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 border-b border-[#e7e7e8] shrink-0">
-                        <span className="font-medium text-base lg:text-lg">
-                            Trình độ Ngoại ngữ, Tin học
-                        </span>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Ngoại ngữ</span>
-                            <span className="flex-1">{applicationDetail?.applicant_lang_lvl}</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span className="flex-1 text-[#535458]">Tin học</span>
-                            <span className="flex-1">
-                                {applicationDetail?.applicant_it_prof_lvl}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col p-4 pl-0 ml-4 gap-3 shrink-0">
-                        <span className="font-medium text-base lg:text-lg">Ghi chú</span>
-                        <span>{applicationDetail?.applicant_note || "Không có"}</span>
-                    </div>
+                    ))}
                 </div>
 
-                <div className="flex justify-between items-center border-t border-[#e7e7e8] ml-4 pr-4 h-18 shrink-0">
-                    <button
-                        className="px-3 h-10 bg-red-200/75 text-red-700 rounded-lg transition duration-200 ease-in-out cursor-pointer"
-                        onClick={() => {
-                            toggleSideView(false);
-                        }}>
-                        Thoát
-                    </button>
-                    <button
-                        className="px-3 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer"
-                        onClick={() => updateById(selectedStatus.label)}>
-                        Cập nhật hồ sơ
-                    </button>
-                </div>
+                <ManageViewFooter
+                    toggleSideView={toggleSideView}
+                    handleChange={() => updateById(selectedStatus.label)}
+                    handleChangeTitle="Cập nhật hồ sơ"
+                />
             </div>
         </Transition>
     );

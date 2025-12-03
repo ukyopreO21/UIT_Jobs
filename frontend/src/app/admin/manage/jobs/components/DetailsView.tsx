@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
-import { AiOutlineClose } from "react-icons/ai";
+import ManageViewHeader from "../../components/ManageViewHeader";
+import ManageViewFooter from "../../components/ManageViewFooter";
 import { formatDate } from "@/utils/format-date";
 import { Transition } from "@headlessui/react";
 import useAdminJobStore from "@/stores/admin-job.store";
@@ -91,19 +92,12 @@ const DetailsView = ({
             leave="transition ease-in duration-200"
             leaveFrom="opacity-100 translate-x-0 scale-100"
             leaveTo="opacity-0 translate-x-2 scale-95">
-            <div className="absolute z-20 flex flex-col bg-white border border-[#e7e7e8] bottom-4 top-18 right-4 not-md:left-4 md:w-140 h-fit max-h-[calc(100dvh-9.5rem)] lg:max-h-[calc(100dvh-5.5rem)] rounded-lg overflow-hidden shadow-md text-responsive">
-                <div className="flex justify-between p-4 pl-0 ml-4 border-b border-[#e7e7e8] shrink-0">
-                    <div className="flex flex-col gap-1">
-                        <span className="text-lg lg:text-xl font-medium">#{jobDetail?.id}</span>
-                        <span className="text-[#535458]">Mã việc làm</span>
-                    </div>
-                    <button className="cursor-pointer" onClick={() => toggleSideView(false)}>
-                        <AiOutlineClose
-                            size={20}
-                            className="transition duration-200 ease-in-out hover:text-[#4263eb]"
-                        />
-                    </button>
-                </div>
+            <div className="admin-page-side-view-default text-default">
+                <ManageViewHeader
+                    title={`#${jobDetail?.id}`}
+                    subTitle="Mã việc làm"
+                    toggleSideView={toggleSideView}
+                />
 
                 <div className="flex flex-col grow overflow-y-auto">
                     <div className="flex flex-col p-4 pl-0 ml-4 gap-3 shrink-0">
@@ -113,11 +107,13 @@ const DetailsView = ({
 
                             if (key === "description") {
                                 return (
-                                    <div key={key} className="flex items-center">
-                                        <span className="flex-1 text-[#535458]">{fieldName}</span>
+                                    <div key={key} className="flex">
+                                        <span className="admin-page-side-view-row-title-default">
+                                            {fieldName}
+                                        </span>
                                         <textarea
                                             name={key}
-                                            className="flex-2 h-64 outline outline-[#e7e7e8] rounded-md p-2 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out resize-none"
+                                            className="flex-2 input-container-outline-default h-64 rounded-md px-3 py-2 transition-default resize-none"
                                             value={value}
                                             onChange={handleOnChange}
                                         />
@@ -128,11 +124,13 @@ const DetailsView = ({
                             if (key === "deadline") {
                                 return (
                                     <div key={key} className="flex items-center">
-                                        <span className="flex-1 text-[#535458]">{fieldName}</span>
+                                        <span className="admin-page-side-view-row-title-default">
+                                            {fieldName}
+                                        </span>
                                         <input
                                             name={key}
                                             type="date"
-                                            className="flex-2 h-10 outline outline-[#e7e7e8] rounded-md px-2 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out"
+                                            className="flex-2 input-container-default input-container-outline-default transition-default no-calendar-icon"
                                             value={value}
                                             onChange={handleOnChange}
                                         />
@@ -142,11 +140,13 @@ const DetailsView = ({
 
                             return (
                                 <div key={key} className="flex items-center">
-                                    <span className="flex-1 text-[#535458]">{fieldName}</span>
+                                    <span className="admin-page-side-view-row-title-default">
+                                        {fieldName}
+                                    </span>
                                     <input
                                         name={key}
                                         type={key === "quantity" ? "number" : "text"}
-                                        className="flex-2 h-10 outline outline-[#e7e7e8] rounded-md px-2 focus-within:outline-2 focus-within:outline-[#4263eb] transition duration-200 ease-in-out"
+                                        className="flex-2 input-container-default input-container-outline-default transition-default"
                                         value={value}
                                         onChange={handleOnChange}
                                     />
@@ -156,22 +156,11 @@ const DetailsView = ({
                     </div>
                 </div>
 
-                <div className="flex justify-between items-center border-t border-[#e7e7e8] ml-4 pr-4 h-18 shrink-0">
-                    <button
-                        className="px-3 h-10 bg-red-200/75 text-red-700 rounded-lg transition duration-200 ease-in-out cursor-pointer"
-                        onClick={() => {
-                            toggleSideView(false);
-                        }}>
-                        Thoát
-                    </button>
-                    <button
-                        className="px-3 h-10 bg-[#dbe4ff] text-[#4263eb] rounded-lg transition duration-200 ease-in-out cursor-pointer"
-                        onClick={() => {
-                            updateById(updateForm);
-                        }}>
-                        Cập nhật việc làm
-                    </button>
-                </div>
+                <ManageViewFooter
+                    toggleSideView={toggleSideView}
+                    handleChange={() => updateById(updateForm)}
+                    handleChangeTitle="Cập nhật việc làm"
+                />
             </div>
         </Transition>
     );

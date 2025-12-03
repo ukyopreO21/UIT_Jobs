@@ -18,12 +18,12 @@ const TableRows = ({
             {data?.map((item, rowIdx) => (
                 <tr
                     key={rowIdx}
-                    className={`h-20 ${rowIdx % 2 === 0 ? "bg-white" : "bg-[#f9fafa]"}`}>
+                    className={`h-20 ${rowIdx % 2 === 0 ? "bg-white" : "bg-primary-bg-50"}`}>
                     {colsToFill.map((col, colIdx) => {
                         const value = item[col];
                         return (
                             <td key={`${rowIdx}-${colIdx}`}>
-                                <div className="px-4 py-2 text-center text-responsive">
+                                <div className="px-4 py-2 text-center text-default">
                                     {col === "deadline"
                                         ? value
                                             ? formatDate(value)
@@ -40,10 +40,10 @@ const TableRows = ({
                                     handleLoadData(item);
                                     toggleSideView();
                                 }}
-                                className="rounded-md flex justify-center items-center cursor-pointer
-										bg-[#dbe4ff] border-[#4263eb] transition duration-200 ease-in-out hover:bg-[#4263eb] text-[#4263eb] hover:text-[#dbe4ff]
-										h-9 w-9 lg:h-10 lg:w-10">
-                                <AiOutlineFileText className="icon-responsive" />
+                                className="rounded-md flex-center
+										 	bg-secondary-blue-light text-secondary-blue-dark hover:bg-secondary-blue-light-extra hover:text-secondary-blue-dark-extra transition-default
+											h-9 w-9 lg:h-10 lg:w-10">
+                                <AiOutlineFileText className="icon-default" />
                             </button>
                         </div>
                     </td>

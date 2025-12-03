@@ -25,57 +25,43 @@ const LoginPage = () => {
     }, [user, router]);
 
     return (
-        <div className="bg-sky-100 flex h-screen justify-center items-center text-responsive">
-            <form className="w-full max-w-120 h-fit flex flex-col gap-6 bg-purple-300 rounded-lg p-6 not-sm:m-4">
+        <div className="flex-center h-screen text-default bg-cover bg-center bg-fixed bg-[url('/auth-background.png')]">
+            <div className="absolute inset-0 backdrop-blur-[2px] bg-black/10"></div>
+            <form
+                className="z-1 w-full max-w-100 h-fit flex flex-col gap-6 rounded-2xl p-6 not-sm:m-4
+							bg-white/30 backdrop-blur-sm shadow-2xl border-2 border-white/20">
                 <span className="text-center block w-full">UIT - Cổng thông tin tuyển dụng</span>
-                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2 w-full">
-                    <AiOutlineUser size={20} color="gray" />
+
+                <div className="flex items-center input-container-default input-container-outline-black transition-default">
+                    <AiOutlineUser className="icon-default text-primary-text" />
                     <input
                         type="text"
                         placeholder="Tên đăng nhập"
-                        className="w-full h-6 outline-none"
+                        className="input-text-default text-default"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
                     />
                 </div>
-                <div className="bg-white h-10 rounded-lg flex items-center gap-2 px-2 w-full">
-                    <AiOutlineLock size={20} color="gray" />
+
+                <div className="flex items-center input-container-default input-container-outline-black transition-default">
+                    <AiOutlineLock className="icon-default text-primary-text" />
                     <input
                         type="password"
                         placeholder="Mật khẩu"
-                        className="w-full h-6 outline-none"
+                        className="input-text-default text-default"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     />
                 </div>
+
+                <button className="self-end text-xs lg:text-sm">Quên mật khẩu?</button>
+
                 <button
                     onClick={handleLogin}
                     disabled={isLoading}
-                    className={`bg-blue-700 text-white font-medium transition duration-200 hover:bg-blue-500 rounded-lg h-12 flex items-center justify-center gap-2 ${
-                        isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"
-                    }`}>
-                    {isLoading ? (
-                        <>
-                            <svg
-                                className="animate-spin h-5 w-5 text-white"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24">
-                                <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
-                            </svg>
-                            Đang đăng nhập...
-                        </>
-                    ) : (
-                        "Đăng nhập"
-                    )}
+                    className={`font-medium transition-default rounded-lg flex-center gap-2
+								text-white bg-secondary-blue-dark hover:bg-secondary-blue-dark-extra
+								h-11 lg:h-12
+								${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}>
+                    {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                 </button>
             </form>
         </div>

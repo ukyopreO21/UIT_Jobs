@@ -1,9 +1,9 @@
 import { AiOutlineForm, AiOutlineHome } from "react-icons/ai";
 import { HiOutlineBriefcase } from "react-icons/hi2";
 import { usePathname } from "next/navigation";
-import LoadingLink from "@/components/LoadingLink";
+import Link from "@/components/LoadingLink";
 
-const ManageMenu = () => {
+const ManageNavigation = () => {
     const pathname = usePathname();
 
     const menuItems = [
@@ -31,23 +31,23 @@ const ManageMenu = () => {
             {menuItems.map((item) => {
                 const active = isActive(item.path);
                 return (
-                    <LoadingLink
+                    <Link
                         key={item.path}
                         href={item.path}
-                        className={`flex items-center p-4 w-72 h-10 rounded-lg cursor-pointer transition
+                        className={`flex items-center p-4 w-72 h-10 rounded-lg cursor-pointer transition-default
                             ${
                                 active
-                                    ? "bg-[#dbe4ff] text-[#4263eb]"
-                                    : "hover:bg-[#f6f6f6] text-[#535458]"
+                                    ? "bg-secondary-blue-light text-secondary-blue-dark"
+                                    : "hover:bg-primary-bg text-primary-text"
                             }
                         `}>
                         {item.icon}
                         <span className="ml-3">{item.label}</span>
-                    </LoadingLink>
+                    </Link>
                 );
             })}
         </div>
     );
 };
 
-export default ManageMenu;
+export default ManageNavigation;

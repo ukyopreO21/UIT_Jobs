@@ -1,5 +1,5 @@
 import { HiMiniChevronRight } from "react-icons/hi2";
-import LoadingLink from "./LoadingLink";
+import Link from "@/components/LoadingLink";
 
 export interface BreadcrumbItem {
     label: string;
@@ -20,13 +20,13 @@ const Breadcrumb = ({ items }: BreadcrumbProps) => {
                     return (
                         <li key={idx} className="flex items-center">
                             {item.href && !isLast ? (
-                                <LoadingLink
+                                <Link
                                     href={item.href}
-                                    className="text-[#535458] hover:text-[#4263eb] transition-colors">
+                                    className="text-primary-text hover:text-secondary-blue-dark-extra transition duration-200 ease-in-out text-default">
                                     {item.label}
-                                </LoadingLink>
+                                </Link>
                             ) : (
-                                <span className="text-responsive font-medium">{item.label}</span>
+                                <span className="text-default font-medium">{item.label}</span>
                             )}
 
                             {!isLast && <HiMiniChevronRight size={16} className="mx-2" />}

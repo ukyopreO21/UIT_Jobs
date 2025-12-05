@@ -22,7 +22,7 @@ router.get("/find-by-id/:id", async (req, res) => {
     } catch (error) {
         switch (error.message) {
             case "APPLICATION_NOT_FOUND":
-                return res.status(404).json({ message: "Đơn không tồn tại" });
+                return res.status(404).json({ message: "Hồ sơ không tồn tại" });
             default:
                 return res.status(500).json({ message: "Lỗi Server" });
         }

@@ -103,7 +103,7 @@ const ManagePagination = ({
                             leave="transition ease-in duration-200"
                             leaveFrom="opacity-100 translate-y-0 scale-100"
                             leaveTo="opacity-0 translate-y-2 scale-95">
-                            <ComboboxOptions className="absolute bottom-full mb-2 w-16 overflow-auto rounded-md bg-white focus:border-none z-10 border border-primary-border">
+                            <ComboboxOptions className="absolute bottom-full mb-2 w-14 lg:w-16 overflow-auto rounded-md bg-white focus:border-none z-10 border border-primary-border">
                                 {pageSizes.map((size) => (
                                     <ComboboxOption
                                         key={size}

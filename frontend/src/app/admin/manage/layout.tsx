@@ -20,7 +20,7 @@ export default function ManageLayout({ children }: { children: ReactNode }) {
             </div>
 
             {/* --- MAIN CONTENT AREA --- */}
-            <div className="relative flex-1 p-4 bg-[#f6f6f6] overflow-y-auto">{children}</div>
+            <div className="relative flex-1 p-4 bg-primary-bg overflow-y-auto">{children}</div>
 
             {/* --- BOTTOM NAV (MOBILE) --- */}
             <ManageBottomNavigation />

@@ -14,10 +14,26 @@ const TableRows = ({
     handleLoadData: (item: Application) => void;
 }) => {
     const statusOptions = [
-        { label: "Đã ghi nhận", color: "text-sky-700", background: "bg-sky-200/75" },
-        { label: "Đang phỏng vấn", color: "text-yellow-700", background: "bg-yellow-200/75" },
-        { label: "Được tuyển dụng", color: "text-green-700", background: "bg-green-200/75" },
-        { label: "Bị từ chối", color: "text-red-700", background: "bg-red-200/75" },
+        {
+            label: "Đã ghi nhận",
+            color: "text-secondary-blue-dark",
+            background: "bg-secondary-blue-light",
+        },
+        {
+            label: "Đang phỏng vấn",
+            color: "text-secondary-yellow-dark",
+            background: "bg-secondary-yellow-light",
+        },
+        {
+            label: "Được tuyển dụng",
+            color: "text-secondary-green-dark",
+            background: "bg-secondary-green-light",
+        },
+        {
+            label: "Bị từ chối",
+            color: "text-secondary-red-dark",
+            background: "bg-secondary-red-light",
+        },
     ];
 
     return (
@@ -25,7 +41,7 @@ const TableRows = ({
             {data?.map((item, rowIdx) => (
                 <tr
                     key={rowIdx}
-                    className={`h-20 ${rowIdx % 2 === 0 ? "bg-white" : "bg-[#f9fafa]"}`}>
+                    className={`h-20 ${rowIdx % 2 === 0 ? "bg-white" : "bg-primary-bg-50"}`}>
                     {colsToFill.map((col, colIdx) => {
                         const value = item[col];
                         return (
@@ -60,15 +76,15 @@ const TableRows = ({
                         );
                     })}
                     <td>
-                        <div className="px-4 py-2 flex justify-center items-center">
+                        <div className="px-4 py-2 flex-center">
                             <button
                                 onClick={() => {
                                     handleLoadData(item);
                                     toggleSideView();
                                 }}
-                                className="rounded-md flex justify-center items-center cursor-pointer
-										bg-secondary-bg-light border-[#4263eb] transition duration-200 ease-in-out hover:bg-secondary-bg-extra-light text-secondary-text-dark hover:text-secondary-text-light
-										h-9 w-9 lg:h-10 lg:w-10">
+                                className="rounded-md flex-center
+											bg-secondary-blue-light text-secondary-blue-dark hover:bg-secondary-blue-light-extra hover:text-secondary-blue-dark-extra transition-default
+											h-9 w-9 lg:h-10 lg:w-10">
                                 <AiOutlineFileText className="icon-default" />
                             </button>
                         </div>

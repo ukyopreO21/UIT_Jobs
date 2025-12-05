@@ -34,7 +34,7 @@ const TableRows = ({
                         );
                     })}
                     <td>
-                        <div className="px-4 py-2 flex justify-center items-center">
+                        <div className="px-4 py-2 flex-center">
                             <button
                                 onClick={() => {
                                     handleLoadData(item);

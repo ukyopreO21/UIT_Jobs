@@ -9,7 +9,7 @@ const GlobalLoader = () => {
     if (!isLoading) return null;
 
     return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center bg-primary-backdrop">
+        <div className="fixed inset-0 z-100 flex-center bg-primary-backdrop">
             <div className="text-white text-4xl animate-spin">{<AiOutlineLoading />}</div>
         </div>
     );

@@ -1,7 +1,8 @@
 backend/node_modules
 backend/.env
 
-
+backend2/cmd/main.exe
+backend2/.env
 
 # frontend ignores
 

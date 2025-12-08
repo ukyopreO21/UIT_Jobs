@@ -9,4 +9,5 @@ func RegisterRoutes(r *gin.Engine) {
 
 	UserRoutes(api.Group("/user"))
 	JobRoutes(api.Group("/job"))
+	ApplicationRoutes(api.Group("/application"))
 }

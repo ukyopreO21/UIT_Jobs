@@ -14,6 +14,7 @@ class ApplicationService {
     }
 
     static async updateById(data: Object) {
+        console.log(data);
         await axiosInstance.put("/application/update-by-id", data);
     }
 }

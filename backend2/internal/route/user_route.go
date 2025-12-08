@@ -2,15 +2,18 @@ package route
 
 import (
 	"uitjobs-backend/internal/controller"
+	"uitjobs-backend/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
+var userController = controller.UserController{}
+
 func UserRoutes(router *gin.RouterGroup) {
-	router.POST("/register", controller.Register)
-	router.POST("/login", controller.Login)
-	router.POST("/renew-access-token", controller.RenewAccessToken)
-	router.POST("/update-info", controller.UpdateInfo)
-	router.POST("/change-password", controller.ChangePassword)
-	router.POST("/logout", controller.Logout)
+	router.POST("/register", userController.Register)
+	router.POST("/login", userController.Login)
+	router.POST("/renew-access-token", userController.RenewAccessToken)
+	router.POST("/update-info", middleware.AdminAuth(), userController.UpdateInfo)
+	router.POST("/change-password", userController.ChangePassword)
+	router.POST("/logout", middleware.AdminAuth(), userController.Logout)
 }

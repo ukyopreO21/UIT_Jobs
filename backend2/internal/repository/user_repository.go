@@ -31,23 +31,15 @@ func (r *UserRepository) Create(user *model.User) (sql.Result, error) {
 
 func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
 	query := `
-        SELECT username, email, phone, password, full_name
+        SELECT *
         FROM users
         WHERE username = ?
     `
-	row := r.DB.QueryRow(query, username)
-
 	var user model.User
-	err := row.Scan(
-		&user.Username,
-		&user.Email,
-		&user.Phone,
-		&user.Password,
-		&user.FullName,
-	)
+	err := r.DB.Get(&user, query, username)
 
-	if err == sql.ErrNoRows {
-		return nil, nil
+	if err != nil {
+		return nil, err
 	}
 
 	return &user, err

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"uitjobs-backend/internal/model"
@@ -10,38 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// func generateID() string {
-// 	now := time.Now()
-// 	datePart := fmt.Sprintf("%04d%02d%02d", now.Year(), now.Month(), now.Day())
-// 	randomPart := fmt.Sprintf("%06d", rand.Intn(1000000))
-// 	return datePart + randomPart
-// }
+type JobController struct{}
 
-// func checkAppIDExists(repo *ApplicationRepository, appID string) (bool, error) {
-// 	app, err := repo.FindByID(appID)
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	return app != nil, nil
-// }
-
-// GenerateUniqueAppID tạo ID duy nhất, đảm bảo chưa tồn tại trong DB
-// func GenerateUniqueAppID(repo *repository.ApplicationRepository) (string, error) {
-//
-
-// 	for {
-// 		id := generateID()
-// 		exists, err := checkAppIDExists(repo, id)
-// 		if err != nil {
-// 			return "", err
-// 		}
-// 		if !exists {
-// 			return id, nil
-// 		}
-// 	}
-// }
-
-func CreateJob(c *gin.Context) {
+func (ctrl *JobController) Create(c *gin.Context) {
 	var job model.Job
 	if err := c.ShouldBindJSON(&job); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -57,9 +29,9 @@ func CreateJob(c *gin.Context) {
 	c.JSON(http.StatusCreated, result)
 }
 
-func FindById(c *gin.Context) {
+func (ctrl *JobController) FindById(c *gin.Context) {
 	id := c.Param("id")
-	job, err := repository.Repos.JobRepo.FindByID(id)
+	job, err := repository.Repos.JobRepo.FindById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -72,7 +44,7 @@ func FindById(c *gin.Context) {
 	c.JSON(http.StatusOK, job)
 }
 
-func FindByFields(c *gin.Context) {
+func (ctrl *JobController) FindByFields(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
 		page = 1
@@ -83,7 +55,9 @@ func FindByFields(c *gin.Context) {
 	}
 	searchValue := c.DefaultQuery("searchValue", "")
 
-	fields := util.GetFields(c, "page", "resultPerPage", "searchValue")
+	var fields = util.GetFields(c, "page", "resultPerPage", "searchValue")
+	log.Println("params:", c.Request.URL.Query())
+	log.Println("fields from controller:", fields)
 
 	data, pagination, positions, faculties, err := repository.Repos.JobRepo.FindByFields(fields, searchValue, page, resultPerPage)
 	if err != nil {
@@ -104,16 +78,18 @@ func FindByFields(c *gin.Context) {
 	})
 }
 
-func UpdateById(c *gin.Context) {
-	id, err := strconv.Atoi(c.DefaultQuery("id", "0"))
-	if err != nil || id == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ID không hợp lệ"})
+func (ctrl *JobController) UpdateById(c *gin.Context) {
+	var job model.Job
+	if err := c.ShouldBindJSON(&job); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Println("Update job with ID:", job.Id)
+	log.Println("Update job data:", job)
+	var fields = util.StructToMap(job, "id", "created_at", "updated_at")
+	log.Println("các fields: ", fields)
 
-	fields := util.GetFields(c, "id")
-
-	result, err := repository.Repos.JobRepo.UpdateById(id, fields)
+	result, err := repository.Repos.JobRepo.UpdateById(job.Id, fields)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -121,16 +97,25 @@ func UpdateById(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func DeleteById(c *gin.Context) {
-	id, err := strconv.Atoi(c.DefaultQuery("id", "0"))
-	if err != nil || id == 0 {
+func (ctrl *JobController) DeleteById(c *gin.Context) {
+	var body struct {
+		Id int `json:"id"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID không hợp lệ"})
 		return
 	}
-	result, err := repository.Repos.JobRepo.DeleteById(id)
+
+	if body.Id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID không hợp lệ"})
+		return
+	}
+
+	result, err := repository.Repos.JobRepo.DeleteById(body.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, result)
 }

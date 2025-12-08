@@ -127,6 +127,7 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
                 totalPages: result.pagination.totalPages,
                 quantityPerStatus: result.quantityPerStatus,
             });
+            console.log("Kết quả tìm kiếm hồ sơ: ", result);
             setAvailableFilterValues(result.positions || [], result.faculties || []);
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {

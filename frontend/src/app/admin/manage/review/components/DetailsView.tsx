@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import ManageViewHeader from "../../components/ManageViewHeader";
 import ManageViewFooter from "../../components/ManageViewFooter";
-import { formatDate, formatDatetime } from "@/utils/format-date";
+import { formatDatetime } from "@/utils/format-date";
 import {
     Listbox,
     ListboxButton,
@@ -59,7 +59,7 @@ const viewParts = [
         fields: ["applicant_name", "applicant_gender", "applicant_dob", "applicant_id"],
     },
     {
-        label: "Thông tin liên lạc",
+        label: "Thông tin liên hệ",
         fields: [
             "applicant_email",
             "applicant_phone",
@@ -146,7 +146,7 @@ const DetailsView = ({
                                         field === "created_at" ||
                                         field === "updated_at" ? (
                                             applicationDetail ? (
-                                                formatDate(
+                                                formatDatetime(
                                                     applicationDetail[
                                                         field as keyof typeof applicationDetail
                                                     ]

@@ -1,5 +1,4 @@
-backend/node_modules
-backend/.env
+backend
 
 backend2/cmd/main.exe
 backend2/.env

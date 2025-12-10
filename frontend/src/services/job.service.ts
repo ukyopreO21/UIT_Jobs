@@ -7,7 +7,7 @@ class JobService {
     }
 
     static async findById(id: number) {
-        const response = await axiosInstance.post(`/job/find-by-id/${id}`);
+        const response = await axiosInstance.get(`/job/find-by-id/${id}`);
         return response.data;
     }
 
@@ -15,10 +15,12 @@ class JobService {
         const response = await axiosInstance.get(`/job/find-by-fields`, {
             params: data,
         });
+        console.log(data);
         return response.data;
     }
 
     static async updateById(data: Object) {
+        console.log("hehe: ", data);
         await axiosInstance.put(`/job/update-by-id`, data);
     }
 }

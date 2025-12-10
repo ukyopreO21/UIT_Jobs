@@ -1,7 +1,7 @@
 import ManageFilterButton from "../../components/ManageFilterButton";
 import TableRows from "./TableRows";
-import ManageSearchBar from "../../components/ManageSearchBar";
-import ManagePagination from "../../components/ManagePagination";
+import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/Pagination";
 import useAdminJobStore from "@/stores/admin-job.store";
 import Job from "@/types/Job";
 
@@ -52,7 +52,7 @@ const ComplexTable = ({
                     toggleSideView={() => toggleFiltersView(true)}
                     hasNoti={!isFieldsEmpty}
                 />
-                <ManageSearchBar handleSearch={setSearchValue} placeholder="Tìm kiếm việc làm..." />
+                <SearchBar handleSearch={setSearchValue} placeholder="Tìm kiếm việc làm..." />
             </div>
 
             {jobs && jobs.length > 0 ? (
@@ -84,17 +84,20 @@ const ComplexTable = ({
                 </div>
             )}
 
-            <ManagePagination
-                resultPerPage={resultPerPage}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                handleResultPerPage={(size) => setResultPerPage(size)}
-                handleFirstPage={() => setCurrentPage(1)}
-                handlePrevPage={() => setCurrentPage(currentPage - 1)}
-                handleCurrentPage={(page) => setCurrentPage(page)}
-                handleNextPage={() => setCurrentPage(currentPage + 1)}
-                handleLastPage={() => setCurrentPage(totalPages)}
-            />
+            <div className="px-4 border-t border-primary-border">
+                <Pagination
+                    pageSizes={[5, 10, 15, 20]}
+                    resultPerPage={resultPerPage}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    handleResultPerPage={(size) => setResultPerPage(size)}
+                    handleFirstPage={() => setCurrentPage(1)}
+                    handlePrevPage={() => setCurrentPage(currentPage - 1)}
+                    handleCurrentPage={(page) => setCurrentPage(page)}
+                    handleNextPage={() => setCurrentPage(currentPage + 1)}
+                    handleLastPage={() => setCurrentPage(totalPages)}
+                />
+            </div>
         </div>
     );
 };

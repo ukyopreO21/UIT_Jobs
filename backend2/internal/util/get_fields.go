@@ -2,26 +2,32 @@ package util
 
 import "github.com/gin-gonic/gin"
 
-func GetFields(c *gin.Context, skipKeys ...string) map[string]string {
-	// Đánh dấu các key cần bỏ
+// Sửa hàm trả về map[string]any để có thể chứa cả string và []string
+func GetFields(c *gin.Context, skipKeys ...string) map[string]any {
+
 	skipMap := make(map[string]bool)
 	for _, key := range skipKeys {
 		skipMap[key] = true
 	}
 
-	// Lấy tất cả query params
 	queries := c.Request.URL.Query()
 
-	fields := make(map[string]string)
+	// 💡 Sửa kiểu dữ liệu đầu ra thành map[string]any
+	fields := make(map[string]any)
 
 	for key, values := range queries {
-		// Bỏ qua nếu nằm trong skip
 		if skipMap[key] {
 			continue
 		}
 
 		if len(values) > 0 {
-			fields[key] = values[0] // chỉ lấy giá trị đầu
+			if len(values) > 1 {
+				// Nếu có NHIỀU giá trị, lưu trữ toàn bộ slice
+				fields[key] = values
+			} else {
+				// Nếu chỉ có MỘT giá trị, lưu trữ chuỗi đơn
+				fields[key] = values[0]
+			}
 		}
 	}
 

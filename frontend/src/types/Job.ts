@@ -5,9 +5,11 @@ export default interface Job {
     faculty: string;
     discipline: string;
     position: string;
-    description: string;
+    descriptions: any[];
     quantity: string;
     salary: string;
     degree: string;
     deadline: string;
+    requirements: any[];
+    benefits: any[];
 }

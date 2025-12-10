@@ -9,7 +9,7 @@ const { showLoading, hideLoading } = useLoadingStore.getState();
 interface PublicApplicationState {
     updated_at: string;
     status: string;
-    submitApplication: (applicationData: Object) => Promise<void>;
+    submitApplication: (applicationData: Object, jobId: Number) => Promise<void>;
     findById: (id: string) => Promise<void>;
 }
 
@@ -17,14 +17,11 @@ const usePublicApplicationStore = create<PublicApplicationState>((set, get) => (
     updated_at: "",
     status: "",
 
-    submitApplication: async (applicationData: Object) => {
+    submitApplication: async (applicationData: Object, jobId: Number) => {
         try {
             showLoading();
-            const response = await axios.post("/api/public/applications", applicationData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const submitData = { ...applicationData, status: "Đã ghi nhận", job_id: jobId };
+            const response = await ApplicationService.create(submitData);
             toast.success("Nộp hồ sơ thành công!");
             return response.data;
         } catch (error: unknown) {

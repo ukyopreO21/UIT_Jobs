@@ -9,7 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Register(c *gin.Context) {
+type UserController struct{}
+
+func (ctrl *UserController) Register(c *gin.Context) {
 	var user model.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -32,7 +34,7 @@ func Register(c *gin.Context) {
 
 }
 
-func Login(c *gin.Context) {
+func (ctrl *UserController) Login(c *gin.Context) {
 	var body struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -73,11 +75,11 @@ func Login(c *gin.Context) {
 
 	user.Password = ""
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "data": user})
+	c.JSON(http.StatusOK, user)
 
 }
 
-func RenewAccessToken(c *gin.Context) {
+func (ctrl *UserController) RenewAccessToken(c *gin.Context) {
 	refreshToken, err := c.Cookie("refreshToken")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No refresh token provided"})
@@ -103,7 +105,7 @@ func RenewAccessToken(c *gin.Context) {
 	})
 }
 
-func UpdateInfo(c *gin.Context) {
+func (ctrl *UserController) UpdateInfo(c *gin.Context) {
 	var user model.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -118,7 +120,7 @@ func UpdateInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func ChangePassword(c *gin.Context) {
+func (ctrl *UserController) ChangePassword(c *gin.Context) {
 	var body struct {
 		Username    string `json:"username"`
 		Password    string `json:"password"`
@@ -158,7 +160,7 @@ func ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func Logout(c *gin.Context) {
+func (ctrl *UserController) Logout(c *gin.Context) {
 	c.SetCookie("accessToken", "", -1, "/", "", false, true)
 
 	c.SetCookie("refreshToken", "", -1, "/", "", false, true)

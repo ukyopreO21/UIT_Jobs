@@ -9,9 +9,8 @@ import {
 } from "@headlessui/react";
 import { HiArrowLongLeft, HiArrowLongRight, HiMiniChevronUpDown } from "react-icons/hi2";
 
-const pageSizes = [5, 10, 15, 20];
-
 const ManagePagination = ({
+    pageSizes,
     resultPerPage,
     currentPage,
     totalPages,
@@ -22,6 +21,7 @@ const ManagePagination = ({
     handleNextPage,
     handleLastPage,
 }: {
+    pageSizes: number[];
     resultPerPage: number;
     currentPage: number;
     totalPages: number;
@@ -56,7 +56,7 @@ const ManagePagination = ({
     };
 
     return (
-        <div className="px-4 h-17 lg:h-18 w-full flex-between-center border-t border-primary-border">
+        <div className="h-17 lg:h-18 w-full flex-between-center">
             <div className="flex-center gap-3">
                 <span className="text-default hidden xl:block">Số kết quả mỗi trang:</span>
                 <Combobox<number>

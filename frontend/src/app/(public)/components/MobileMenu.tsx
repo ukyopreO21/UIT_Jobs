@@ -8,7 +8,7 @@ const MobileMenu = ({
     close: () => void;
 }) => {
     return (
-        <div className="absolute right-0 top-0 h-full w-70 max-w-full bg-white shadow-xl transition-transform duration-300">
+        <div className="absolute right-0 top-0 h-full w-70 max-w-full bg-white shadow-xl transition-transform duration-300 text-default lg:hidden">
             <div className="flex flex-col h-full">
                 {/* Header của Sidebar (Chứa nút đóng) */}
                 <div className="flex items-center justify-end p-4 border-b">
@@ -38,8 +38,8 @@ const MobileMenu = ({
                         <Link
                             key={page.name}
                             href={page.href}
-                            onClick={close} // Đóng menu khi chọn link
-                            className="block px-4 py-3 text-lg font-medium rounded-md transition-default hover:bg-secondary-blue-light-extra hover:text-secondary-blue-dark-extra">
+                            onClick={close}
+                            className="block px-4 py-3 font-medium rounded-md transition-default hover:bg-secondary-blue-light-extra hover:text-secondary-blue-dark-extra">
                             {page.name}
                         </Link>
                     ))}

@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func StructToMap(data interface{}, skipKeys ...string) map[string]any {
+func StructToMap(data any, skipKeys ...string) map[string]any {
 	skip := make(map[string]bool)
 	for _, v := range skipKeys {
 		skip[v] = true
@@ -13,7 +13,7 @@ func StructToMap(data interface{}, skipKeys ...string) map[string]any {
 	result := make(map[string]any)
 
 	val := reflect.ValueOf(data)
-	if val.Kind() == reflect.Ptr {
+	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
 

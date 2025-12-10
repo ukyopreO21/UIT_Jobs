@@ -7,7 +7,7 @@ class JobService {
     }
 
     static async findById(id: number) {
-        const response = await axiosInstance.post(`/job/find-by-id/${id}`);
+        const response = await axiosInstance.get(`/job/find-by-id/${id}`);
         return response.data;
     }
 

@@ -21,12 +21,12 @@ func NewApplicationRepository(db *sqlx.DB) *ApplicationRepository {
 	return &ApplicationRepository{DB: db}
 }
 
-func buildInsertQuery(table string, data interface{}) (string, map[string]any, error) {
+func buildInsertQuery(table string, data any) (string, map[string]any, error) {
 	// 1. Lấy Value và Type của data
 	val := reflect.ValueOf(data)
 
 	// Nếu là pointer thì lấy giá trị thực mà nó trỏ tới
-	if val.Kind() == reflect.Ptr {
+	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
 
@@ -78,17 +78,21 @@ func buildInsertQuery(table string, data interface{}) (string, map[string]any, e
 		strings.Join(placeholders, ", "),
 	)
 
+	log.Println("Built Insert Query:", query)
+
 	return query, named, nil
 }
 
 func (r *ApplicationRepository) Create(application *model.Application) (sql.Result, error) {
 	query, args, err := buildInsertQuery("applications", application)
 	if err != nil {
+		log.Println("Error building insert query:", err)
 		return nil, err
 	}
 
 	result, err := r.DB.NamedExec(query, args)
 	if err != nil {
+		log.Println("Error executing insert query:", err)
 		return nil, err
 	}
 

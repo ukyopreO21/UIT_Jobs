@@ -3,7 +3,7 @@ import unflattenObject from "../utils/unflatten-object.js";
 class JobDAO {
     static async create(data) {
         const query =
-            "INSERT INTO jobs (title, location, faculty, discipline, position, description, quantity, salary, degree, deadline) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO jobs (title, location, faculty, discipline, position, descriptions, quantity, salary, degree, deadline) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         const [result] = await db.execute(query, [
             data.title,
@@ -11,7 +11,7 @@ class JobDAO {
             data.faculty,
             data.discipline || null,
             data.position,
-            data.description || null,
+            data.descriptions || null,
             data.quantity,
             data.salary || null,
             data.degree,

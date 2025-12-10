@@ -59,7 +59,7 @@ const viewParts = [
         fields: ["applicant_name", "applicant_gender", "applicant_dob", "applicant_id"],
     },
     {
-        label: "Thông tin liên lạc",
+        label: "Thông tin liên hệ",
         fields: [
             "applicant_email",
             "applicant_phone",

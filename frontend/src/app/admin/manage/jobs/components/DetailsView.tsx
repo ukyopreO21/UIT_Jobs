@@ -11,7 +11,7 @@ interface JobUpdateForm {
     faculty: string | null;
     discipline: string | null;
     position: string | null;
-    description: string | null;
+    descriptions: string | null;
     quantity: string | number | null;
     salary: string;
     degree: string | null;
@@ -24,7 +24,7 @@ const fieldNamesMap: { [key: string]: string } = {
     faculty: "Đơn vị",
     discipline: "Bộ môn",
     position: "Vị trí",
-    description: "Mô tả",
+    descriptions: "Mô tả",
     quantity: "Số lượng",
     salary: "Mức lương",
     degree: "Bằng cấp",
@@ -48,7 +48,7 @@ const DetailsView = ({
         faculty: null,
         discipline: null,
         position: null,
-        description: null,
+        descriptions: null,
         quantity: null,
         salary: "Xem trong Thông báo tuyển dụng",
         degree: null,
@@ -71,7 +71,7 @@ const DetailsView = ({
                 faculty: jobDetail.faculty,
                 discipline: jobDetail.discipline,
                 position: jobDetail.position,
-                description: jobDetail.description,
+                descriptions: jobDetail.descriptions,
                 quantity: jobDetail.quantity,
                 salary: jobDetail.salary,
                 degree: jobDetail.degree,
@@ -105,7 +105,7 @@ const DetailsView = ({
                             const value = updateForm[key] ?? "";
                             const fieldName = fieldNamesMap[key] || key;
 
-                            if (key === "description") {
+                            if (key === "descriptions") {
                                 return (
                                     <div key={key} className="flex">
                                         <span className="admin-page-side-view-row-title-default">

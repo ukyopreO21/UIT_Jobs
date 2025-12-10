@@ -3,7 +3,7 @@ package model
 type Application struct {
 	Id                        string  `db:"id" json:"id"`
 	JobId                     int     `db:"job_id" json:"job_id"`
-	ApplicantId               int     `db:"applicant_id" json:"applicant_id"`
+	ApplicantId               string  `db:"applicant_id" json:"applicant_id"`
 	ApplicantName             string  `db:"applicant_name" json:"applicant_name"`
 	ApplicantDob              string  `db:"applicant_dob" json:"applicant_dob"`
 	ApplicantGender           string  `db:"applicant_gender" json:"applicant_gender"`
@@ -24,8 +24,6 @@ type Application struct {
 	ApplicantCV               string  `db:"applicant_cv" json:"applicant_cv"`
 	ApplicantNote             *string `db:"applicant_note" json:"applicant_note"`
 	Status                    string  `db:"status" json:"status"`
-	CreatedAt                 string  `db:"created_at" json:"created_at"`
-	UpdatedAt                 string  `db:"updated_at" json:"updated_at"`
 }
 
 type ApplicantionResponse struct {
@@ -33,4 +31,6 @@ type ApplicantionResponse struct {
 	JobPosition   string  `db:"position" json:"position"`
 	JobFaculty    string  `db:"faculty" json:"faculty"`
 	JobDiscipline *string `db:"discipline" json:"discipline"`
+	CreatedAt     string  `db:"created_at" json:"created_at"`
+	UpdatedAt     string  `db:"updated_at" json:"updated_at"`
 }

@@ -1,8 +1,8 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/react";
 import ManageFilterButton from "../../components/ManageFilterButton";
 import TableRows from "./TableRows";
-import ManageSearchBar from "../../components/ManageSearchBar";
-import ManagePagination from "../../components/ManagePagination";
+import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/Pagination";
 import useAdminApplicationStore from "@/stores/admin-application.store";
 import Application from "@/types/Application";
 
@@ -77,7 +77,7 @@ const ComplexTable = ({
                                     toggleSideView={() => toggleFiltersView(true)}
                                 />
 
-                                <ManageSearchBar
+                                <SearchBar
                                     handleSearch={setSearchValue}
                                     placeholder="Tìm kiếm hồ sơ..."
                                 />
@@ -110,17 +110,20 @@ const ComplexTable = ({
                                     Không tìm thấy hồ sơ nào.
                                 </div>
                             )}
-                            <ManagePagination
-                                resultPerPage={resultPerPage}
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                handleResultPerPage={(size) => setResultPerPage(size)}
-                                handleFirstPage={() => setCurrentPage(1)}
-                                handlePrevPage={() => setCurrentPage(currentPage - 1)}
-                                handleCurrentPage={(page) => setCurrentPage(page)}
-                                handleNextPage={() => setCurrentPage(currentPage + 1)}
-                                handleLastPage={() => setCurrentPage(totalPages)}
-                            />
+                            <div className="px-4 border-t border-primary-border">
+                                <Pagination
+                                    pageSizes={[5, 10, 15, 20]}
+                                    resultPerPage={resultPerPage}
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    handleResultPerPage={(size) => setResultPerPage(size)}
+                                    handleFirstPage={() => setCurrentPage(1)}
+                                    handlePrevPage={() => setCurrentPage(currentPage - 1)}
+                                    handleCurrentPage={(page) => setCurrentPage(page)}
+                                    handleNextPage={() => setCurrentPage(currentPage + 1)}
+                                    handleLastPage={() => setCurrentPage(totalPages)}
+                                />
+                            </div>
                         </TabPanel>
                     ))}
                 </TabPanels>

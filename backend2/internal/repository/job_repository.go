@@ -21,7 +21,7 @@ func NewJobRepository(db *sqlx.DB) *JobRepository {
 
 func (r *JobRepository) Create(job *model.Job) (sql.Result, error) {
 	query := `
-		INSERT INTO jobs (title, location, faculty, discipline, position, description, quantity, salary, degree, deadline)
+		INSERT INTO jobs (title, location, faculty, discipline, position, descriptions, quantity, salary, degree, deadline)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	return r.DB.Exec(query,
@@ -30,7 +30,7 @@ func (r *JobRepository) Create(job *model.Job) (sql.Result, error) {
 		job.Faculty,
 		job.Discipline,
 		job.Position,
-		job.Description,
+		job.Descriptions,
 		job.Quantity,
 		job.Salary,
 		job.Degree,
@@ -40,21 +40,8 @@ func (r *JobRepository) Create(job *model.Job) (sql.Result, error) {
 
 func (r *JobRepository) FindById(id string) (*model.Job, error) {
 	query := `SELECT * FROM jobs WHERE id = ?`
-	row := r.DB.QueryRow(query, id)
 	var job model.Job
-	err := row.Scan(
-		&job.Id,
-		&job.Title,
-		&job.Location,
-		&job.Faculty,
-		&job.Discipline,
-		&job.Position,
-		&job.Description,
-		&job.Quantity,
-		&job.Salary,
-		&job.Degree,
-		&job.Deadline,
-	)
+	err := r.DB.QueryRowx(query, id).StructScan(&job)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -326,8 +313,8 @@ func (r *JobRepository) buildWhereClause(fields map[string]any, searchValue stri
 	// --- 4. Xử lý SearchValue ---
 	if searchValue != "" {
 		// Thêm điều kiện tìm kiếm đa trường
-		whereParts = append(whereParts, "(id LIKE ? OR position LIKE ? OR faculty LIKE ? OR discipline LIKE ? OR degree LIKE ?)")
-		for range 5 { // 5 lần cho 5 placeholder
+		whereParts = append(whereParts, "(id LIKE ? OR title LIKE ? OR position LIKE ? OR faculty LIKE ? OR discipline LIKE ? OR degree LIKE ?)")
+		for range 6 { // 6 lần cho 6 placeholder
 			values = append(values, "%"+searchValue+"%")
 		}
 	}

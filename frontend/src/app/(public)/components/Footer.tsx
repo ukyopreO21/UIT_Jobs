@@ -38,10 +38,10 @@ const socialMedia = [
 
 const Footer = () => {
     return (
-        <footer className="w-full p-4 text-primary-text text-default">
+        <footer className="w-full p-4 text-primary-text text-default mt-40">
             <div className="mx-auto max-w-7xl">
                 <div className="flex-between-center flex-col sm:flex-row gap-2 bg-secondary-blue-light rounded-xl p-4 border border-secondary-blue-light-extra">
-                    <img className="max-h-12 w-auto" src="logo.png" alt="Logo" />
+                    <img className="max-h-12 w-auto" src="/logo.png" alt="Logo" />
                     <div>
                         <div className="text-center sm:text-right text-base lg:text-lg text-secondary-blue-dark-extra">
                             Đại học Quốc gia Thành phố Hồ Chí Minh
@@ -81,7 +81,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="py-4 pb-2 flex-between-center border-t border-primary-border text-sm ">
+                <div className="py-4 pb-2 flex-between-center border-t border-primary-border text-sm">
                     &copy; {new Date().getFullYear()} UIT. All rights reserved.
                 </div>
             </div>

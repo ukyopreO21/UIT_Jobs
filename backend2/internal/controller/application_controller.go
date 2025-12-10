@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
+
 	"uitjobs-backend/internal/model"
 	"uitjobs-backend/internal/repository"
 	"uitjobs-backend/internal/util"
@@ -20,12 +23,19 @@ func (ctrl *ApplicationController) generateId() string {
 	now := time.Now()
 	datePart := fmt.Sprintf("%04d%02d%02d", now.Year(), now.Month(), now.Day())
 	randomPart := fmt.Sprintf("%06d", rand.Intn(1000000))
+	log.Println("Generated ID parts:", datePart+randomPart)
 	return datePart + randomPart
 }
 
 func (ctrl *ApplicationController) checkAppIdExists(repo *repository.ApplicationRepository, appId string) (bool, error) {
+	log.Println("Checking if application ID exists:", appId)
 	app, err := repo.FindById(appId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+
+		// Các lỗi khác → lỗi
 		return false, err
 	}
 	return app != nil, nil
@@ -46,16 +56,21 @@ func (ctrl *ApplicationController) generateUniqueAppId(repo *repository.Applicat
 
 func (ctrl *ApplicationController) Create(c *gin.Context) {
 	var application model.Application
+
 	if err := c.ShouldBindJSON(&application); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Println("Creating application:", application)
+
 	uniqueId, err := ctrl.generateUniqueAppId(repository.Repos.ApplicationRepo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate unique application ID"})
 		return
 	}
 	application.Id = uniqueId
+	log.Println("Generated unique application ID:", application.Id)
 	result, err := repository.Repos.ApplicationRepo.Create(&application)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -19,7 +19,7 @@ export const montserratFont = Montserrat({
 
 export const metadata: Metadata = {
     title: "Cổng thông tin tuyển dụng - UIT",
-    description: "",
+    descriptions: "",
 };
 
 export const viewport: Viewport = {

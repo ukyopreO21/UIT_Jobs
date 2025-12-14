@@ -5,13 +5,7 @@ import Pagination from "@/components/Pagination";
 import useAdminJobStore from "@/stores/admin-job.store";
 import Job from "@/types/Job";
 
-const ComplexTable = ({
-    toggleDetailsView,
-    toggleFiltersView,
-}: {
-    toggleDetailsView: (value: boolean) => void;
-    toggleFiltersView: (value: boolean) => void;
-}) => {
+const ComplexTable = ({ toggleFiltersView }: { toggleFiltersView: (value: boolean) => void }) => {
     const jobs = useAdminJobStore((state) => state.jobs);
     const resultPerPage = useAdminJobStore((state) => state.resultPerPage);
     const currentPage = useAdminJobStore((state) => state.currentPage);
@@ -26,9 +20,10 @@ const ComplexTable = ({
 
     const colsToShow = [
         "Mã việc làm",
+        "Hình thức",
         "Vị trí",
-        "Đơn vị",
-        "Bộ môn",
+        "Phòng/ban",
+        "Tiểu phòng/ban",
         "Số lượng",
         "Bằng cấp",
         "Hạn chót",
@@ -37,9 +32,10 @@ const ComplexTable = ({
 
     const colsToFill: Array<keyof Job> = [
         "id",
-        "position",
-        "faculty",
-        "discipline",
+        "type",
+        "position_name",
+        "department_name",
+        "sub_department_name",
         "quantity",
         "degree",
         "deadline",
@@ -47,7 +43,7 @@ const ComplexTable = ({
 
     return (
         <div className="flex-1 flex flex-col min-h-0 h-full border border-primary-border bg-white rounded-md overflow-hidden">
-            <div className="px-4 h-17 lg:h-18 w-full flex-between-center border-b border-primary-border">
+            <div className="px-4 h-17 bp4:h-18 w-full flex-between-center border-b border-primary-border">
                 <ManageFilterButton
                     toggleSideView={() => toggleFiltersView(true)}
                     hasNoti={!isFieldsEmpty}
@@ -59,7 +55,7 @@ const ComplexTable = ({
                 <div className="flex-1 overflow-auto">
                     <table className="w-full">
                         <thead className="sticky top-0">
-                            <tr className="h-11 lg:h-12 bg-primary-bg-100">
+                            <tr className="h-11 bp4:h-12 bg-primary-bg-100">
                                 {colsToShow.map((col, index) => (
                                     <th key={index} className="font-normal">
                                         <div className="px-4 text-primary-text text-default">
@@ -70,12 +66,7 @@ const ComplexTable = ({
                             </tr>
                         </thead>
 
-                        <TableRows
-                            data={jobs}
-                            colsToFill={colsToFill}
-                            toggleSideView={() => toggleDetailsView(true)}
-                            handleLoadData={setJobDetail}
-                        />
+                        <TableRows data={jobs} colsToFill={colsToFill} />
                     </table>
                 </div>
             ) : (

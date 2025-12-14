@@ -41,7 +41,7 @@ const Tracking = () => {
                         {status !== "" && (
                             <div className="w-full bg-primary-bg rounded-md p-3">
                                 <div className="flex flex-col gap-3">
-                                    <div className="text-xl lg:text-2xl font-medium self-center">
+                                    <div className="text-xl bp4:text-2xl font-medium self-center">
                                         Mã hồ sơ: #{appplicationId}
                                     </div>
                                     <div className="flex flex-col gap-4">

@@ -1,14 +1,15 @@
-import { on } from "events";
 import { useRef, useEffect } from "react";
 
 interface TextareaProps {
-    label: string;
+    label?: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     name: string;
+    placeholder?: string;
+    disabled?: boolean;
 }
 
-export default ({ label, value, name, onChange }: TextareaProps) => {
+export default ({ label, value, name, onChange, placeholder, disabled }: TextareaProps) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const adjustHeight = () => {
         const textarea = textareaRef.current;
@@ -30,14 +31,17 @@ export default ({ label, value, name, onChange }: TextareaProps) => {
     return (
         <div className="flex flex-col gap-2 h-fit">
             <label className="text-primary-text text-default">{label}</label>
-            <div className="flex items-center gap-3 px-3 min-h-9 lg:min-h-10 input-container-outline-default text-default transition-default">
+            <div
+                className={`flex items-center gap-3 px-3 min-h-9 bp4:min-h-10 input-container-outline-default text-default transition-default ${disabled && "disabled"}`}>
                 <textarea
                     ref={textareaRef}
                     name={name}
                     value={value}
                     className="input-text-default overflow-hidden resize-none py-2"
                     onChange={onChange}
+                    placeholder={placeholder}
                     rows={1}
+                    disabled={disabled}
                 />
             </div>
         </div>

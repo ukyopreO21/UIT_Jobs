@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"reflect"
-	"sort"
+	"strconv"
 	"strings"
 	"uitjobs-backend/internal/model"
+	"uitjobs-backend/internal/util"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -21,108 +21,38 @@ func NewApplicationRepository(db *sqlx.DB) *ApplicationRepository {
 	return &ApplicationRepository{DB: db}
 }
 
-func buildInsertQuery(table string, data any) (string, map[string]any, error) {
-	// 1. Lấy Value và Type của data
-	val := reflect.ValueOf(data)
-
-	// Nếu là pointer thì lấy giá trị thực mà nó trỏ tới
-	if val.Kind() == reflect.Pointer {
-		val = val.Elem()
-	}
-
-	// Kiểm tra xem data có phải là struct không
-	if val.Kind() != reflect.Struct {
-		return "", nil, fmt.Errorf("data must be a struct or a pointer to a struct")
-	}
-
-	typ := val.Type()
-	named := make(map[string]any)
-	var cols []string
-
-	// 2. Duyệt qua các field của struct
-	for i := 0; i < val.NumField(); i++ {
-		field := typ.Field(i)
-
-		// Lấy tag "db"
-		dbTag := field.Tag.Get("db")
-
-		// Bỏ qua nếu không có tag, hoặc tag là "-", hoặc field không được export (viết thường)
-		if dbTag == "" || dbTag == "-" || !field.IsExported() {
-			continue
-		}
-
-		// Xử lý trường hợp tag có thêm option (ví dụ: `db:"created_at,omitempty"`)
-		dbName := strings.Split(dbTag, ",")[0]
-
-		cols = append(cols, dbName)
-		named[dbName] = val.Field(i).Interface()
-	}
-
-	if len(cols) == 0 {
-		return "", nil, fmt.Errorf("no columns to insert")
-	}
-
-	// 3. Sắp xếp cột để đảm bảo thứ tự nhất quán (quan trọng cho testing/caching)
-	sort.Strings(cols)
-
-	placeholders := make([]string, 0, len(cols))
-	for _, col := range cols {
-		placeholders = append(placeholders, ":"+col)
-	}
-
-	// 4. Tạo câu query
-	query := fmt.Sprintf(
-		"INSERT INTO %s (%s) VALUES (%s)",
-		table,
-		strings.Join(cols, ", "),
-		strings.Join(placeholders, ", "),
-	)
-
-	log.Println("Built Insert Query:", query)
-
-	return query, named, nil
-}
-
 func (r *ApplicationRepository) Create(application *model.Application) (sql.Result, error) {
-	query, args, err := buildInsertQuery("applications", application)
+	query := util.InsertStruct(r.DB, "applications", application, []string{})
+	result, err := r.DB.NamedExec(query, application)
 	if err != nil {
-		log.Println("Error building insert query:", err)
 		return nil, err
 	}
-
-	result, err := r.DB.NamedExec(query, args)
-	if err != nil {
-		log.Println("Error executing insert query:", err)
-		return nil, err
-	}
-
 	return result, nil
 }
 
 func (r *ApplicationRepository) FindById(id string) (*model.ApplicantionResponse, error) {
-	query := `SELECT applications.*, jobs.position, jobs.faculty, jobs.discipline
-			FROM applications
-			INNER JOIN jobs ON applications.job_id = jobs.id
-			WHERE applications.id = ?`
+	query := fmt.Sprintf(`%s %s WHERE applications.id = ?`, r.buildSelectClause(), r.buildFromJoinClause())
 
 	var app model.ApplicantionResponse
 
 	err := r.DB.QueryRowx(query, id).StructScan(&app)
 	if err != nil {
+		log.Println("Error querying application by ID:", err)
 		return nil, err
 	}
 
 	return &app, nil
 }
 
-func (r *ApplicationRepository) GetQuantityPerStatus() (map[string]int, error) {
-	query := `
+func (r *ApplicationRepository) GetQuantityPerStatus(employer_id string) (map[string]int, error) {
+	query := fmt.Sprintf(`
         SELECT status, COUNT(*) AS total
-        FROM applications
+        %s
+		WHERE departments.employer_id = ?
         GROUP BY status
-    `
+    `, r.buildFromJoinClause())
 
-	rows, err := r.DB.Queryx(query)
+	rows, err := r.DB.Queryx(query, employer_id)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +83,7 @@ func (r *ApplicationRepository) GetQuantityPerStatus() (map[string]int, error) {
 }
 
 func (r *ApplicationRepository) GetPagination(whereClause string, val []any, resultPerPage int) (totalRecords int, totalPages int, err error) {
-	query := "SELECT COUNT(*) AS total FROM applications INNER JOIN jobs ON applications.job_id = jobs.id " + whereClause
+	query := fmt.Sprintf(`SELECT COUNT(*) AS total %s %s`, r.buildFromJoinClause(), whereClause)
 
 	var total int
 	err = r.DB.QueryRow(query, val...).Scan(&total)
@@ -166,7 +96,7 @@ func (r *ApplicationRepository) GetPagination(whereClause string, val []any, res
 	return totalRecords, totalPages, nil
 }
 
-func (r *ApplicationRepository) FindByFields(fields map[string]any, searchValue string, page int, resultPerPage int) (data []any, pagination map[string]int, quantityPerStatus map[string]int, positions []string, faculties []map[string]any, err error) {
+func (r *ApplicationRepository) FindByFields(employer_id string, fields map[string]any, searchValue string, page int, resultPerPage int) (data []any, pagination map[string]int, quantityPerStatus map[string]int, positions []*model.Position, subDepartments []*model.SubDepartmentResponse, err error) {
 	if page <= 0 {
 		page = 1
 	}
@@ -175,20 +105,14 @@ func (r *ApplicationRepository) FindByFields(fields map[string]any, searchValue 
 	}
 	offset := (page - 1) * resultPerPage
 
-	log.Println("FindByFields - fields:", fields)
+	whereClause, values := r.buildWhereClause(employer_id, fields, searchValue)
 
-	whereClause, values := r.buildWhereClause(fields, searchValue)
+	query := fmt.Sprintf(`%s %s %s ORDER BY applications.created_at DESC LIMIT ? OFFSET ?`, r.buildSelectClause(), r.buildFromJoinClause(), whereClause)
 
-	// 3. Lấy dữ liệu jobs
-	query := fmt.Sprintf(`
-				SELECT applications.*, jobs.position, jobs.faculty, jobs.discipline
-				FROM applications
-				INNER JOIN jobs ON applications.job_id = jobs.id %s
-				ORDER BY applications.created_at DESC LIMIT ? OFFSET ?`, whereClause)
-	log.Println("Final query:", query)
 	valuesWithLimit := append(values, resultPerPage, offset)
 
 	rows, err := r.DB.Queryx(query, valuesWithLimit...)
+
 	if err != nil {
 		return nil, nil, nil, nil, nil, err
 	}
@@ -200,22 +124,21 @@ func (r *ApplicationRepository) FindByFields(fields map[string]any, searchValue 
 		data = append(data, app)
 	}
 
-	// 4. Lấy tổng số records để tính pagination
-	countQuery := fmt.Sprintf(`
-				SELECT COUNT(*) AS total
-            	FROM applications
-            	INNER JOIN jobs ON applications.job_id = jobs.id
-				%s`, whereClause)
-	var total int
-	err = r.DB.QueryRow(countQuery, values...).Scan(&total)
+	positions, err = Repos.PositionRepo.GetAll(employer_id)
 	if err != nil {
 		return nil, nil, nil, nil, nil, err
 	}
-	totalPages := int(math.Ceil(float64(total) / float64(resultPerPage)))
 
-	positions, _ = Repos.JobRepo.GetAllPositions()
-	faculties, _ = Repos.JobRepo.GetAllFaculties()
-	quantityPerStatus, _ = r.GetQuantityPerStatus()
+	subDepartments, err = Repos.SubDepartmentRepo.GetAll(employer_id)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+
+	total, totalPages, err := r.GetPagination(whereClause, values, resultPerPage)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+	quantityPerStatus, _ = r.GetQuantityPerStatus(employer_id)
 
 	pagination = map[string]int{
 		"currentPage":   page,
@@ -224,7 +147,7 @@ func (r *ApplicationRepository) FindByFields(fields map[string]any, searchValue 
 		"totalPages":    totalPages,
 	}
 
-	return data, pagination, quantityPerStatus, positions, faculties, nil
+	return data, pagination, quantityPerStatus, positions, subDepartments, nil
 }
 
 func (r *ApplicationRepository) UpdateById(id string, fields map[string]any) (sql.Result, error) {
@@ -257,119 +180,102 @@ func (r *ApplicationRepository) DeleteById(id string) (sql.Result, error) {
 	return r.DB.Exec(query, id)
 }
 
-func (r *ApplicationRepository) buildWhereClause(fields map[string]any, searchValue string) (string, []any) {
-	whereParts := []string{}
-	values := []any{}
+func (r *ApplicationRepository) buildWhereClause(employer_id any, fields map[string]any, searchValue string) (string, []any) {
+	conditions := []string{}
+	args := []any{}
 
-	// --- Xử lý Positions (Phiên bản đã sửa lỗi cú pháp) ---
-	posList := []any{}
-	var rawPositions any
-
-	// Ưu tiên kiểm tra key "positions[]" (key thực tế)
-	if val, ok := fields["positions[]"]; ok {
-		rawPositions = val
-	} else if val, ok := fields["positions"]; ok {
-		// Hoặc kiểm tra key "positions" (nếu có tiền xử lý)
-		rawPositions = val
+	// --- employer_id ---
+	if employer_id != "" {
+		conditions = append(conditions, "departments.employer_id = ?")
+		args = append(args, employer_id)
 	}
 
-	if rawPositions != nil {
-		// Sử dụng type switch để kiểm tra lần lượt các kiểu dữ liệu
-		switch list := rawPositions.(type) {
-		case []string:
-			// 2. Kiểm tra kiểu slice chuẩn ([]string)
-			for _, p := range list {
-				if p != "" {
-					posList = append(posList, p)
+	if v, ok := fields["positions[]"]; ok {
+		if rawIds, ok2 := v.([]string); ok2 && len(rawIds) > 0 {
+
+			placeholders := make([]string, len(rawIds))
+			for i, raw := range rawIds {
+				id, err := strconv.Atoi(raw)
+				if err != nil {
+					continue
 				}
+				placeholders[i] = "?"
+				args = append(args, id)
 			}
 
-		case string:
-			// 3. Kiểm tra kiểu chuỗi đơn (string)
-			if list != "" {
-				posList = append(posList, list)
-			}
-		}
-	}
-
-	// 3. Xây dựng mệnh đề SQL IN (phần này giữ nguyên)
-	if len(posList) > 0 {
-		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(posList)), ",")
-		whereParts = append(whereParts, fmt.Sprintf("position IN (%s)", placeholders))
-		values = append(values, posList...)
-	}
-
-	filterGroupParts := []string{}
-
-	// --- 2. Xử lý Filters (Faculty/Disciplines) ---
-	// Cần import package common nếu struct FilterGroup được dùng
-	if filters, ok := fields["filters"].([]map[string]any); ok {
-		for _, filterGroup := range filters {
-			groupConditions := []string{}
-
-			// A. Xử lý Faculty (Bắt buộc phải có faculty để tạo nhóm)
-			if faculty, ok := filterGroup["faculty"].(string); ok && faculty != "" {
-				groupConditions = append(groupConditions, "faculty = ?")
-				values = append(values, faculty)
-			} else {
-				// Nếu không có faculty, bỏ qua nhóm lọc này để tránh lỗi SQL
-				continue
-			}
-
-			// B. Xử lý Disciplines (Nếu có)
-			// Lưu ý: Cần đảm bảo rằng dữ liệu "disciplines" được unflatten thành []any
-			if disciplines, ok := filterGroup["disciplines"].([]any); ok && len(disciplines) > 0 {
-				// Tạo placeholders cho IN clause: ?, ?, ?
-				placeholders := strings.TrimSuffix(strings.Repeat("?,", len(disciplines)), ",")
-
-				// Thêm điều kiện: discipline IN (?,?,?)
-				groupConditions = append(groupConditions, fmt.Sprintf("discipline IN (%s)", placeholders))
-				values = append(values, disciplines...) // Thêm các giá trị disciplines vào mảng values
-			}
-
-			// C. Ghép các điều kiện trong cùng một nhóm (Faculty AND Disciplines)
-			if len(groupConditions) > 0 {
-				// Ví dụ: (faculty = ? AND discipline IN (...))
-				filterGroupParts = append(filterGroupParts, fmt.Sprintf("(%s)", strings.Join(groupConditions, " AND ")))
+			if len(placeholders) > 0 {
+				conditions = append(conditions,
+					fmt.Sprintf("positions.id IN (%s)", strings.Join(placeholders, ",")),
+				)
 			}
 		}
 	}
 
-	if len(filterGroupParts) > 0 {
-		// Ví dụ: ((F1 AND D1) OR (F2 AND D2))
-		// Thêm toàn bộ khối lọc này vào whereParts chính
-		whereParts = append(whereParts, fmt.Sprintf("(%s)", strings.Join(filterGroupParts, " OR ")))
+	if v, ok := fields["subDepartments[]"]; ok {
+		if rawIds, ok2 := v.([]string); ok2 && len(rawIds) > 0 {
+
+			placeholders := make([]string, len(rawIds))
+			for i, raw := range rawIds {
+				id, err := strconv.Atoi(raw)
+				if err != nil {
+					continue
+				}
+				placeholders[i] = "?"
+				args = append(args, id)
+			}
+
+			if len(placeholders) > 0 {
+				conditions = append(conditions,
+					fmt.Sprintf("sub_departments.id IN (%s)", strings.Join(placeholders, ",")),
+				)
+			}
+		}
 	}
 
-	// --- 3. Xử lý StartDate, EndDate ---
-	if start, ok := fields["startDate"].(string); ok && start != "" {
-		whereParts = append(whereParts, "deadline >= ?")
-		values = append(values, start+" 00:00:00")
-	}
-	if end, ok := fields["endDate"].(string); ok && end != "" {
-		whereParts = append(whereParts, "deadline <= ?")
-		values = append(values, end+" 23:59:59")
+	// --- startDate & endDate ---
+	if v, ok := fields["startDate"]; ok {
+		if dateStr, ok2 := v.(string); ok2 && dateStr != "" {
+			conditions = append(conditions, "applications.created_at >= ?")
+			args = append(args, dateStr+" 00:00:00")
+		}
 	}
 
-	// status
-	if status, ok := fields["status"].(string); ok && status != "" {
-		whereParts = append(whereParts, "applications.status = ?")
-		values = append(values, status)
+	if v, ok := fields["endDate"]; ok {
+		if dateStr, ok2 := v.(string); ok2 && dateStr != "" {
+			conditions = append(conditions, "applications.created_at <= ?")
+			args = append(args, dateStr+" 23:59:59")
+		}
 	}
 
-	// --- 4. Xử lý SearchValue ---
+	// --- searchValue ---
 	if searchValue != "" {
-		// Thêm điều kiện tìm kiếm đa trường
-		whereParts = append(whereParts, "(applications.id LIKE ? OR applications.applicant_name LIKE ?)")
-		for range 2 { // 2 lần cho 2 placeholder
-			values = append(values, "%"+searchValue+"%")
-		}
+		conditions = append(conditions, "(applications.id LIKE ? OR applications.applicant_name LIKE ?)")
+		like := "%" + searchValue + "%"
+		args = append(args, like, like)
 	}
 
-	whereClause := ""
-	if len(whereParts) > 0 {
-		whereClause = "WHERE " + strings.Join(whereParts, " AND ")
+	// Build WHERE
+	if len(conditions) == 0 {
+		return "", args
 	}
 
-	return whereClause, values
+	whereClause := "WHERE " + strings.Join(conditions, " AND ")
+	return whereClause, args
+}
+
+func (r *ApplicationRepository) buildSelectClause() string {
+	return `SELECT applications.*,
+			positions.name as position_name, departments.name as department_name,
+			sub_departments.name as sub_department_name, jobs.salary_type as salary_type,
+			jobs.salary_min as salary_min, jobs.salary_max as salary_max`
+}
+
+func (r *ApplicationRepository) buildFromJoinClause() string {
+	return `
+			FROM applications
+			INNER JOIN jobs ON applications.job_id = jobs.id
+			INNER JOIN sub_departments ON jobs.sub_department_id = sub_departments.id
+			INNER JOIN departments ON sub_departments.department_id = departments.id
+			INNER JOIN positions ON jobs.position_id = positions.id
+	`
 }

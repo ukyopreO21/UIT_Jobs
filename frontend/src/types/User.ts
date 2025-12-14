@@ -3,4 +3,5 @@ export default interface User {
     email: string;
     phone: string;
     full_name: string;
+    employer_id: string;
 }

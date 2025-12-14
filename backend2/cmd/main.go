@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 	"uitjobs-backend/internal/database"
+	"uitjobs-backend/internal/middleware"
 	"uitjobs-backend/internal/repository"
 	"uitjobs-backend/internal/route"
 
@@ -33,6 +34,7 @@ func main() {
 	repository.InitRepositories(db)
 
 	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5000", "http://192.168.100.57:5000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
@@ -40,6 +42,9 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	r.Use(middleware.OptionalAuth())
+
 	route.RegisterRoutes(r)
 
 	port := os.Getenv("PORT")

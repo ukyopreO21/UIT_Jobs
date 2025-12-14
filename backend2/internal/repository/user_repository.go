@@ -17,8 +17,8 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 
 func (r *UserRepository) Create(user *model.User) (sql.Result, error) {
 	query := `
-        INSERT INTO users (username, email, phone, password, full_name)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (username, email, phone, password, full_name, employer_id)
+        VALUES (?, ?, ?, ?, ?, ?)
     `
 	return r.DB.Exec(query,
 		user.Username,
@@ -26,6 +26,7 @@ func (r *UserRepository) Create(user *model.User) (sql.Result, error) {
 		user.Phone,
 		user.Password,
 		user.FullName,
+		user.EmployerId,
 	)
 }
 
@@ -48,13 +49,14 @@ func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
 func (r *UserRepository) UpdateInfo(user *model.User) (sql.Result, error) {
 	query := `
         UPDATE users
-        SET email = ?, phone = ?, full_name = ?
+        SET email = ?, phone = ?, full_name = ?, employer_id = ?
         WHERE username = ?
     `
 	return r.DB.Exec(query,
 		user.Email,
 		user.Phone,
 		user.FullName,
+		user.EmployerId,
 		user.Username,
 	)
 }

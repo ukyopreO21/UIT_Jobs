@@ -13,7 +13,7 @@ func UserRoutes(router *gin.RouterGroup) {
 	router.POST("/register", userController.Register)
 	router.POST("/login", userController.Login)
 	router.POST("/renew-access-token", userController.RenewAccessToken)
-	router.POST("/update-info", middleware.AdminAuth(), userController.UpdateInfo)
+	router.POST("/update-info", middleware.RequireAuth(), userController.UpdateInfo)
 	router.POST("/change-password", userController.ChangePassword)
-	router.POST("/logout", middleware.AdminAuth(), userController.Logout)
+	router.POST("/logout", middleware.RequireAuth(), userController.Logout)
 }

@@ -8,7 +8,7 @@ const MobileMenu = ({
     close: () => void;
 }) => {
     return (
-        <div className="absolute right-0 top-0 h-full w-70 max-w-full bg-white shadow-xl transition-transform duration-300 text-default lg:hidden">
+        <div className="absolute right-0 top-0 h-full w-70 max-w-full bg-white shadow-xl transition-transform duration-300 text-default bp4:hidden">
             <div className="flex flex-col h-full">
                 {/* Header của Sidebar (Chứa nút đóng) */}
                 <div className="flex items-center justify-end p-4 border-b">

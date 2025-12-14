@@ -8,15 +8,15 @@
 
 	.admin-page-first-container-default {
 		@apply h-9 shrink-0 flex justify-between items-center;
-		@apply lg:h-10;
+		@apply bp4:h-10;
 	}
 
 	.admin-page-side-view-default {
 		@apply absolute z-20 flex flex-col rounded-lg overflow-hidden;
 		@apply bg-white border border-primary-border;
 		@apply top-17 bottom-4 right-4;
-		@apply lg:top-18 not-md:left-4 md:w-140;
-		@apply h-fit max-h-[calc(100dvh-9.25rem)] lg:max-h-[calc(100dvh-5.5rem)]
+		@apply bp4:top-18 not-bp3:left-4 bp3:w-140;
+		@apply h-fit max-h-[calc(100dvh-9.25rem)] bp4:max-h-[calc(100dvh-5.5rem)]
 	}
 
 	.admin-page-side-view-header-default {
@@ -24,7 +24,7 @@
 	}
 
 	.admin-page-side-view-row-title-default {
-		@apply flex-1 text-primary-text h-9 lg:h-10 flex items-center;
+		@apply flex-1 text-primary-text h-9 bp4:h-10 flex items-center;
 	}
 
 	.admin-page-side-view-part-default {

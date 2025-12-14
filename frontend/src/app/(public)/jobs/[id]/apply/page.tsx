@@ -32,28 +32,28 @@ const Apply = () => {
                 />
                 <div className="flex flex-col mt-10 text-default gap-6">
                     <div className="flex-center flex-col gap-4 border border-primary-border rounded-lg p-4 bg-primary-bg">
-                        <div className="text-base lg:text-lg text-primary-text text-center">
+                        <div className="text-base bp4:text-lg text-primary-text text-center">
                             Bạn đang nộp hồ sơ ứng tuyển cho vị trí&nbsp;
-                            <span className="text-secondary-blue-dark-extra font-medium text-lg lg:text-xl">
-                                {jobDetail?.position.toUpperCase()}
+                            <span className="text-secondary-blue-dark-extra font-medium text-lg bp4:text-xl">
+                                {jobDetail?.position_name.toUpperCase()}
                             </span>
                             &nbsp;của việc làm
                         </div>
-                        <div className="text-lg lg:text-xl font-medium uppercase text-secondary-blue-dark-extra text-center">
+                        <div className="text-lg bp4:text-xl font-medium uppercase text-secondary-blue-dark-extra text-center">
                             {jobDetail?.title}
                         </div>
                     </div>
-                    <div className="flex gap-8 flex-col-reverse lg:flex-row">
+                    <div className="flex gap-8 flex-col-reverse bp5:flex-row">
                         <div className="w-full h-fit border border-primary-border rounded-lg p-4">
                             <ApplyForm jobId={Number(params.id)} />
                         </div>
 
-                        <div className="lg:w-96 shrink-0 flex flex-col gap-6">
+                        <div className="bp5:w-96 shrink-0 flex flex-col gap-6">
                             <LocationCard location={jobDetail?.location || ""} />
                             <RecruitingUnitCard
-                                company={jobDetail?.location || ""}
-                                department={jobDetail?.faculty || ""}
-                                unit={jobDetail?.discipline || ""}
+                                employer={jobDetail?.employer_name || ""}
+                                department={jobDetail?.department_name || ""}
+                                unit={jobDetail?.sub_department_name || ""}
                                 getListStyle={(level) => getListStyle(level)}
                             />
                         </div>

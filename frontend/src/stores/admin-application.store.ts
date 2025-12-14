@@ -1,36 +1,30 @@
 import { create } from "zustand";
-import axios from "axios";
 import toast from "react-hot-toast";
 import Application from "@/types/Application";
 import ApplicationService from "@/services/application.service";
 import useLoadingStore from "./loading.store";
-import useAvailableFiltersStore from "./available-filters.store";
+import handleError from "@/utils/handle-error";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
-const { setAvailableFilterValues } = useAvailableFiltersStore.getState();
 
 interface quantityPerStatus {
     [key: string]: number;
-}
-
-interface FilterGroup {
-    faculty: string;
-    disciplines: string[];
 }
 
 interface ApplicationState {
     applications: Array<Application> | null;
     applicationDetail: Application | null;
     quantityPerStatus: quantityPerStatus;
-
     searchValue: string;
+    positions: { id: number; name: string }[];
+    departments: { id: number; name: string }[];
+    subDepartments: { id: number; name: string; department_id: number; is_general: boolean }[];
     fields: {
-        status?: string;
-        positions?: string[];
-        filters?: FilterGroup[];
+        positions?: any[];
+        subDepartments?: any[];
         startDate?: string;
         endDate?: string;
-        [key: string]: any;
+        status: string;
     };
     resultPerPage: number;
     currentPage: number;
@@ -57,9 +51,11 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
         "Bị từ chối": 0,
     },
     searchValue: "",
+    positions: [],
+    departments: [],
+    subDepartments: [],
     fields: {
         status: "Đã ghi nhận",
-        filters: [],
     },
     resultPerPage: 10,
     currentPage: 1,
@@ -101,12 +97,7 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
             const result = await ApplicationService.findById(id);
             set({ applicationDetail: result });
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Lấy thông tin hồ sơ thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -126,16 +117,24 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
                 applications: result.data,
                 totalPages: result.pagination.totalPages,
                 quantityPerStatus: result.quantityPerStatus,
+                positions: result.positions,
+                subDepartments: result.subDepartments.map((sd: any) => ({
+                    id: sd.id,
+                    name: sd.name,
+                    department_id: sd.department_id,
+                    is_general: sd.is_general,
+                })),
+                departments: Array.from(
+                    new Map<number, { id: number; name: string }>(
+                        result.subDepartments.map((sd: any) => [
+                            sd.department_id,
+                            { id: sd.department_id, name: sd.department_name },
+                        ])
+                    ).values()
+                ),
             });
-            console.log("Kết quả tìm kiếm hồ sơ: ", result);
-            setAvailableFilterValues(result.positions || [], result.faculties || []);
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Tìm kiếm hồ sơ thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -145,8 +144,8 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
         const fields = get().fields;
 
         return (
-            (!fields.filters || fields.filters.length === 0) &&
             (!fields.positions || fields.positions.length === 0) &&
+            (!fields.subDepartments || fields.subDepartments.length === 0) &&
             (!fields.startDate || fields.startDate === "") &&
             (!fields.endDate || fields.endDate === "")
         );
@@ -159,13 +158,8 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
             await ApplicationService.updateById(data);
             set({ applicationDetail: { ...get().applicationDetail, status } as Application });
             toast.success(`Cập nhật trạng thái hồ sơ ${data.id} thành công.`);
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Cập nhật hồ sơ thất bại. Vui lòng thử lại.");
+        } catch (error: unknown) {
+            handleError(error);
         } finally {
             hideLoading();
         }

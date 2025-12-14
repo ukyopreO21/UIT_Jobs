@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import axios from "axios";
 import toast from "react-hot-toast";
 import useLoadingStore from "./loading.store";
 import ApplicationService from "@/services/application.service";
+import handleError from "@/utils/handle-error";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
 
@@ -25,14 +25,7 @@ const usePublicApplicationStore = create<PublicApplicationState>((set, get) => (
             toast.success("Nộp hồ sơ thành công!");
             return response.data;
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else {
-                toast.error("Nộp hồ sơ thất bại. Vui lòng thử lại.");
-            }
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -44,12 +37,7 @@ const usePublicApplicationStore = create<PublicApplicationState>((set, get) => (
             const result = await ApplicationService.findById(id);
             set({ status: result.status, updated_at: result.updated_at });
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Lấy thông tin hồ sơ thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }

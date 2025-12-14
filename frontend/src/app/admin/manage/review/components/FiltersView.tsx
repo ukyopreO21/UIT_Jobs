@@ -1,9 +1,8 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import ManageViewHeader from "../../components/ManageViewHeader";
 import ManageViewFooter from "../../components/ManageViewFooter";
 import useAdminApplicationStore from "@/stores/admin-application.store";
-import useAvailableFiltersStore from "@/stores/available-filters.store";
 
 const FiltersView = ({
     toggleSideView,
@@ -13,113 +12,93 @@ const FiltersView = ({
     isSideViewShowing: boolean;
 }) => {
     const [checkedPositions, setCheckedPositions] = useState<Record<string, boolean>>({});
-    const [checkedFaculties, setCheckedFaculties] = useState<Record<string, boolean>>({});
-    const [checkedDisciplines, setCheckedDisciplines] = useState<Record<string, boolean>>({});
+    const [checkedDepartments, setCheckedDepartments] = useState<Record<string, boolean>>({});
+    const [checkedSubDepartments, setCheckedSubDepartments] = useState<Record<string, boolean>>({});
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
 
-    const availableFilterValues = useAvailableFiltersStore((state) => state);
-    const fields = useAdminApplicationStore((state) => state.fields);
+    const positions = useAdminApplicationStore((state) => state.positions);
+    const departments = useAdminApplicationStore((state) => state.departments);
+    const subDepartments = useAdminApplicationStore((state) => state.subDepartments);
     const setFields = useAdminApplicationStore((state) => state.setFields);
 
     const updateFields = () => {
-        const positions = Object.keys(checkedPositions).filter((pos) => checkedPositions[pos]);
+        const selectedPositions = Object.keys(checkedPositions)
+            .filter((id) => checkedPositions[+id])
+            .map(Number);
 
-        const filters: { faculty: string; disciplines: string[] }[] = [];
-
-        availableFilterValues.faculties.forEach((facData) => {
-            if (checkedFaculties[facData.name]) {
-                const selectedDisciplinesInFaculty = (facData.disciplines || []).filter(
-                    (disc) => checkedDisciplines[disc]
-                );
-
-                filters.push({
-                    faculty: facData.name,
-                    disciplines: selectedDisciplinesInFaculty,
-                });
-            }
-        });
+        const selectedSubDepartments = Object.keys(checkedSubDepartments)
+            .filter((id) => checkedSubDepartments[+id])
+            .map(Number);
 
         setFields({
-            positions,
-            filters,
+            positions: selectedPositions,
+            subDepartments: selectedSubDepartments,
             startDate,
             endDate,
         });
     };
 
-    const handleDisciplineChange = (facultyName: string, discipline: string) => {
-        setCheckedDisciplines((prev) => ({
+    const handleSubDepartmentChange = (subDepartmentId: number) => {
+        const subDep = subDepartments.find((sd) => sd.id === subDepartmentId);
+        if (!subDep) return;
+
+        const departmentId = subDep.department_id;
+
+        setCheckedSubDepartments((prev) => ({
             ...prev,
-            [discipline]: !prev[discipline],
+            [subDepartmentId]: !prev[subDepartmentId],
         }));
 
-        setCheckedFaculties((prev) => ({
+        // Luôn tick department cha khi có sub được tick
+        setCheckedDepartments((prev) => ({
             ...prev,
-            [facultyName]: true,
+            [departmentId]: true,
         }));
     };
 
-    const handleFacultyChange = (facultyName: string) => {
-        setCheckedFaculties((prev) => {
-            const isChecked = !prev[facultyName];
-            if (!isChecked) {
-                const facultyData = availableFilterValues.faculties.find(
-                    (f) => f.name === facultyName
-                );
-                if (facultyData && facultyData.disciplines) {
-                    setCheckedDisciplines((prevDisc) => {
-                        const newDisc = { ...prevDisc };
-                        facultyData.disciplines!.forEach((d) => delete newDisc[d]);
-                        return newDisc;
+    const handleDepartmentChange = (departmentId: number) => {
+        const relatedSubDepartments = subDepartments.filter(
+            (sd) => sd.department_id === departmentId
+        );
+
+        setCheckedDepartments((prev) => {
+            const isChecked = !prev[departmentId];
+
+            setCheckedSubDepartments((prevSub) => {
+                const newState = { ...prevSub };
+
+                if (isChecked) {
+                    // Tick department thì tick tất cả sub (kể cả is_general)
+                    relatedSubDepartments.forEach((sd) => {
+                        newState[sd.id] = true;
+                    });
+                } else {
+                    // Untick department thì bỏ tất cả sub
+                    relatedSubDepartments.forEach((sd) => {
+                        delete newState[sd.id];
                     });
                 }
-            }
+
+                return newState;
+            });
 
             return {
                 ...prev,
-                [facultyName]: isChecked,
+                [departmentId]: isChecked,
             };
         });
     };
 
-    const handlePositionChange = (position: string) => {
+    const handlePositionChange = (position: number) => {
         setCheckedPositions((prev) => ({
             ...prev,
             [position]: !prev[position],
         }));
     };
 
-    useEffect(() => {
-        if (isSideViewShowing) {
-            setStartDate(fields.startDate || "");
-            setEndDate(fields.endDate || "");
-
-            const posMap: Record<string, boolean> = {};
-            if (fields.positions) {
-                fields.positions.forEach((p) => {
-                    posMap[p] = true;
-                });
-            }
-            setCheckedPositions(posMap);
-
-            const facMap: Record<string, boolean> = {};
-            const discMap: Record<string, boolean> = {};
-
-            if (fields.filters) {
-                fields.filters.forEach((item) => {
-                    facMap[item.faculty] = true;
-                    if (item.disciplines) {
-                        item.disciplines.forEach((d) => {
-                            discMap[d] = true;
-                        });
-                    }
-                });
-            }
-            setCheckedFaculties(facMap);
-            setCheckedDisciplines(discMap);
-        }
-    }, [isSideViewShowing, fields.startDate, fields.endDate, fields.positions, fields.filters]);
+    const getVisibleSubDepartments = (departmentId: number) =>
+        subDepartments?.filter((sd) => sd.department_id === departmentId && !sd.is_general) ?? [];
 
     return (
         <Transition
@@ -140,7 +119,7 @@ const FiltersView = ({
 
                 <div className="flex flex-col flex-1 overflow-y-auto">
                     <div className="admin-page-side-view-part-default">
-                        <span className="font-medium text-base lg:text-lg">Thời gian nộp</span>
+                        <span className="font-medium text-lg">Ngày nộp</span>
                         <div className="flex">
                             <span className="flex-1 text-primary-text">Từ ngày</span>
                             <input
@@ -155,59 +134,51 @@ const FiltersView = ({
                             <input
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
-                                className="outline-none cursor-pointer"
+                                className="outline-none"
                                 type="date"
                             />
                         </div>
                     </div>
 
                     <div className="admin-page-side-view-part-default">
-                        <span className="font-medium text-base lg:text-lg">Vị trí ứng tuyển</span>
-                        {availableFilterValues.positions.map((position) => (
-                            <div key={position} className="flex">
-                                <span className="text-primary-text flex-1">- {position}</span>
+                        <span className="font-medium text-lg">Vị trí ứng tuyển</span>
+                        {positions.map((position) => (
+                            <div key={position.id} className="flex">
+                                <span className="flex-1 text-primary-text">- {position.name}</span>
                                 <input
                                     type="checkbox"
-                                    checked={!!checkedPositions[position]}
-                                    onChange={() => handlePositionChange(position)}
+                                    checked={!!checkedPositions[position.id]}
+                                    onChange={() => handlePositionChange(position.id)}
                                 />
                             </div>
                         ))}
                     </div>
 
                     <div className="admin-page-side-view-part-default border-none">
-                        <span className="font-medium text-base lg:text-lg">Đơn vị tuyển dụng</span>
-
-                        {availableFilterValues.faculties.map((faculty) => (
-                            <div key={faculty.name} className="flex flex-col gap-3">
-                                <div className="flex items-center gap-3">
-                                    <span className="flex-1 text-primary-text">
-                                        - {faculty.name}
-                                    </span>
+                        <span className="font-medium text-lg">Đơn vị tuyển dụng</span>
+                        {departments.map((dep) => (
+                            <div key={dep.id} className="flex flex-col gap-3">
+                                <div className="flex items-center">
+                                    <span className="flex-1 text-primary-text">- {dep.name}</span>
                                     <input
                                         type="checkbox"
-                                        checked={!!checkedFaculties[faculty.name]}
-                                        onChange={() => handleFacultyChange(faculty.name)}
+                                        checked={!!checkedDepartments[dep.id]}
+                                        onChange={() => handleDepartmentChange(dep.id)}
                                     />
                                 </div>
 
-                                {faculty.disciplines && faculty.disciplines.length > 0 && (
+                                {getVisibleSubDepartments(dep.id).length > 0 && (
                                     <div className="flex flex-col pl-6 gap-3">
-                                        {faculty.disciplines.map((discipline) => (
-                                            <div
-                                                key={discipline}
-                                                className="flex gap-10 items-center">
+                                        {getVisibleSubDepartments(dep.id).map((sd) => (
+                                            <div key={sd.id} className="flex gap-10 items-center">
                                                 <span className="flex-1 text-primary-text">
-                                                    + {discipline}
+                                                    + {sd.name}
                                                 </span>
                                                 <input
                                                     type="checkbox"
-                                                    checked={!!checkedDisciplines[discipline]}
+                                                    checked={!!checkedSubDepartments[sd.id]}
                                                     onChange={() =>
-                                                        handleDisciplineChange(
-                                                            faculty.name,
-                                                            discipline
-                                                        )
+                                                        handleSubDepartmentChange(sd.id)
                                                     }
                                                 />
                                             </div>

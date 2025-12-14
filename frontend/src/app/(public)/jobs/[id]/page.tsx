@@ -27,7 +27,7 @@ const JobDetail = () => {
         {
             label: "Vị trí",
             icon: <AiOutlineUser className="icon-default" />,
-            value: jobDetail?.position,
+            value: jobDetail?.position_name,
         },
         {
             label: "Bằng cấp",
@@ -42,12 +42,20 @@ const JobDetail = () => {
         {
             label: "Hình thức",
             icon: <AiOutlineBulb className="icon-default" />,
-            value: "Bán thời gian",
+            value:
+                jobDetail?.type === "full-time"
+                    ? "Toàn thời gian"
+                    : jobDetail?.type === "part-time"
+                      ? "Bán thời gian"
+                      : jobDetail?.type === "internship" && "Thực tập",
         },
         {
             label: "Mức lương",
             icon: <AiOutlineDollarCircle className="icon-default" />,
-            value: jobDetail?.salary,
+            value:
+                jobDetail?.salary_type === "negotiable"
+                    ? "Thoả thuận"
+                    : `${jobDetail?.salary_min?.toLocaleString()} - ${jobDetail?.salary_max?.toLocaleString()} triệu`,
         },
         {
             label: "Hạn chót",
@@ -108,25 +116,25 @@ const JobDetail = () => {
                     items={[
                         { label: "Trang chủ", href: "/" },
                         { label: "Việc làm", href: "/jobs" },
-                        { label: `${params?.id}` },
+                        { label: "Chi tiết việc làm" },
                     ]}
                 />
                 <div className="flex flex-col mt-10">
-                    <div className="flex flex-col xl:flex-row gap-4 xl:gap-8 pb-6 mb-6 border-b border-primary-border">
-                        <div className="text-xl lg:text-2xl font-bold uppercase">
+                    <div className="flex flex-col bp6:flex-row gap-4 bp6:gap-8 pb-6 mb-6">
+                        <div className="w-full text-xl bp4:text-2xl font-bold uppercase">
                             {jobDetail?.title}
                         </div>
-                        <div className="xl:w-96 shrink-0 flex xl:justify-end">
+                        <div className="bp6:w-96 shrink-0 flex bp6:justify-end">
                             <NavigateApplyButton />
                         </div>
                     </div>
-                    <div className="flex gap-8 flex-col-reverse lg:flex-row">
+                    <div className="flex gap-8 flex-col-reverse bp5:flex-row">
                         <div className="flex-1 flex flex-col gap-6 p-4 border border-primary-border rounded-lg">
                             <div className="flex flex-col gap-3">
-                                <label className="text-lg lg:text-xl font-medium text-black">
+                                <label className="text-lg bp4:text-xl font-medium text-black">
                                     THÔNG TIN TUYỂN DỤNG
                                 </label>
-                                <div className="grid gap-2 grid-cols-1 lg:grid-cols-2 border border-primary-border rounded-md p-4 bg-primary-bg">
+                                <div className="grid gap-x-2 gap-y-4 grid-cols-1 bp5:grid-cols-2 border border-primary-border rounded-md p-4 bg-primary-bg">
                                     {gridItems.map((item, index) => (
                                         <div key={index} className="flex text-primary-text gap-4">
                                             <div className="flex items-center gap-2 flex-2 text-black">
@@ -141,7 +149,7 @@ const JobDetail = () => {
                             <div className="flex flex-col gap-6 text-primary-text">
                                 {mainItems.map((item, index) => (
                                     <div key={index} className="flex flex-col gap-1">
-                                        <label className="text-lg lg:text-xl font-medium text-black">
+                                        <label className="text-lg bp4:text-xl font-medium text-black">
                                             {item.label}
                                         </label>
                                         {renderUnorderedList(item.values, index)}
@@ -151,12 +159,12 @@ const JobDetail = () => {
                             <NavigateApplyButton />
                         </div>
 
-                        <div className="lg:w-96 shrink-0 flex flex-col gap-6">
+                        <div className="bp5:w-96 shrink-0 flex flex-col gap-6">
                             <LocationCard location={jobDetail?.location || ""} />
                             <RecruitingUnitCard
-                                company={jobDetail?.location || ""}
-                                department={jobDetail?.faculty || ""}
-                                unit={jobDetail?.discipline || ""}
+                                employer={jobDetail?.employer_name || ""}
+                                department={jobDetail?.department_name || ""}
+                                unit={jobDetail?.sub_department_name || ""}
                                 getListStyle={(level) => getListStyle(level)}
                             />
                         </div>

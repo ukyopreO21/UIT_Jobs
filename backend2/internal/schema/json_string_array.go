@@ -1,4 +1,4 @@
-package util
+package schema
 
 import (
 	"database/sql/driver"
@@ -6,10 +6,8 @@ import (
 	"errors"
 )
 
-// 1. Tạo kiểu dữ liệu riêng thay vì dùng []string thuần
 type MixedJSONStringArray []any
 
-// 2. Hàm Scan: Giúp sqlx hiểu cách đọc từ DB (JSON bytes) -> Go ([]string)
 func (a *MixedJSONStringArray) Scan(value any) error {
 	if value == nil {
 		*a = []any{}
@@ -22,10 +20,9 @@ func (a *MixedJSONStringArray) Scan(value any) error {
 	return json.Unmarshal(bytes, &a)
 }
 
-// 3. Hàm Value: Giúp sqlx hiểu cách ghi từ Go -> DB (khi bạn INSERT/UPDATE)
 func (a MixedJSONStringArray) Value() (driver.Value, error) {
 	if a == nil {
-		return nil, nil // Lưu NULL hoặc "[]"
+		return nil, nil
 	}
 	return json.Marshal(a)
 }

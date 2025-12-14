@@ -16,13 +16,19 @@ type JobController struct{}
 func (ctrl *JobController) Create(c *gin.Context) {
 	var job model.Job
 	if err := c.ShouldBindJSON(&job); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
 		return
 	}
 
+	job.Deadline = job.Deadline.UTC()
+
+	log.Println("Creating job:", job)
+
 	result, err := repository.Repos.JobRepo.Create(&job)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println("err1", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 
@@ -30,10 +36,14 @@ func (ctrl *JobController) Create(c *gin.Context) {
 }
 
 func (ctrl *JobController) FindById(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID không hợp lệ"})
+		return
+	}
 	job, err := repository.Repos.JobRepo.FindById(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	if job == nil {
@@ -49,19 +59,25 @@ func (ctrl *JobController) FindByFields(c *gin.Context) {
 	if err != nil {
 		page = 1
 	}
+
 	resultPerPage, err := strconv.Atoi(c.DefaultQuery("resultPerPage", "10"))
 	if err != nil {
 		resultPerPage = 10
 	}
+
 	searchValue := c.DefaultQuery("searchValue", "")
+	user, err := util.GetUserTokenPayload(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Không đủ quyền truy cập"})
+		return
+	}
 
 	var fields = util.GetFields(c, "page", "resultPerPage", "searchValue")
-	log.Println("params:", c.Request.URL.Query())
-	log.Println("fields from controller:", fields)
+	log.Println("fields:", fields)
 
-	data, pagination, positions, faculties, err := repository.Repos.JobRepo.FindByFields(fields, searchValue, page, resultPerPage)
+	data, pagination, positions, subDepartments, err := repository.Repos.JobRepo.FindByFields(user.EmployerId, fields, searchValue, page, resultPerPage)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	paginationResponse := gin.H{
@@ -71,27 +87,26 @@ func (ctrl *JobController) FindByFields(c *gin.Context) {
 		"totalPages":    pagination["totalPages"],
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"data":       data,
-		"pagination": paginationResponse,
-		"positions":  positions,
-		"faculties":  faculties,
+		"data":           data,
+		"pagination":     paginationResponse,
+		"positions":      positions,
+		"subDepartments": subDepartments,
 	})
 }
 
 func (ctrl *JobController) UpdateById(c *gin.Context) {
 	var job model.Job
 	if err := c.ShouldBindJSON(&job); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
 		return
 	}
-	log.Println("Update job with ID:", job.Id)
-	log.Println("Update job data:", job)
 	var fields = util.StructToMap(job, "id", "created_at", "updated_at")
-	log.Println("các fields: ", fields)
 
 	result, err := repository.Repos.JobRepo.UpdateById(job.Id, fields)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println("err2", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	c.JSON(http.StatusOK, result)
@@ -113,7 +128,7 @@ func (ctrl *JobController) DeleteById(c *gin.Context) {
 
 	result, err := repository.Repos.JobRepo.DeleteById(body.Id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	c.JSON(http.StatusOK, result)

@@ -1,27 +1,23 @@
 import { create } from "zustand";
-import axios from "axios";
 import toast from "react-hot-toast";
-import Job from "@/types/Job";
+import { Job, JobCreate, JobUpdate } from "@/types/Job";
 import JobService from "@/services/job.service";
-import useAvailableFiltersStore from "./available-filters.store";
 import useLoadingStore from "./loading.store";
+import { formatDateToISOWithOffset } from "@/utils/format-date";
+import handleError from "@/utils/handle-error";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
-const { setAvailableFilterValues } = useAvailableFiltersStore.getState();
-
-interface FilterGroup {
-    faculty: string;
-    disciplines: string[];
-}
 
 interface JobState {
     jobs: Array<Job> | null;
     jobDetail: Job | null;
-
     searchValue: string;
+    positions: { id: number; name: string }[];
+    departments: { id: number; name: string }[];
+    subDepartments: { id: number; name: string; department_id: number; is_general: boolean }[];
     fields: {
         positions?: string[];
-        filters?: FilterGroup[];
+        subDepartments?: string[];
         startDate?: string;
         endDate?: string;
     };
@@ -38,17 +34,18 @@ interface JobState {
     findByFields: () => Promise<void>;
 
     isFieldsEmpty: () => boolean;
-    updateById: (data: Object) => Promise<void>;
-    create: (data: Object) => Promise<void>;
+    updateById: (data: JobUpdate) => Promise<void>;
+    create: (data: JobCreate) => Promise<void>;
 }
 
 const useAdminJobStore = create<JobState>((set, get) => ({
     jobs: null,
     jobDetail: null,
     searchValue: "",
-    fields: {
-        filters: [],
-    },
+    positions: [],
+    departments: [],
+    subDepartments: [],
+    fields: {},
     resultPerPage: 10,
     currentPage: 1,
     totalPages: 1,
@@ -88,12 +85,7 @@ const useAdminJobStore = create<JobState>((set, get) => ({
             const result = await JobService.findById(id);
             set({ jobDetail: result });
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Lấy thông tin việc làm thất bại. Vui lòng thử lại sau.");
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -112,15 +104,24 @@ const useAdminJobStore = create<JobState>((set, get) => ({
             set({
                 jobs: result.data,
                 totalPages: result.pagination.totalPages,
+                positions: result.positions,
+                subDepartments: result.subDepartments.map((sd: any) => ({
+                    id: sd.id,
+                    name: sd.name,
+                    department_id: sd.department_id,
+                    is_general: sd.is_general,
+                })),
+                departments: Array.from(
+                    new Map<number, { id: number; name: string }>(
+                        result.subDepartments.map((sd: any) => [
+                            sd.department_id,
+                            { id: sd.department_id, name: sd.department_name },
+                        ])
+                    ).values()
+                ),
             });
-            setAvailableFilterValues(result.positions || [], result.faculties || []);
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Tìm kiếm việc làm thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -129,44 +130,48 @@ const useAdminJobStore = create<JobState>((set, get) => ({
     isFieldsEmpty: () => {
         const fields = get().fields;
         return (
-            (!fields.filters || fields.filters.length === 0) &&
             (!fields.positions || fields.positions.length === 0) &&
+            (!fields.subDepartments || fields.subDepartments.length === 0) &&
             (!fields.startDate || fields.startDate === "") &&
             (!fields.endDate || fields.endDate === "")
         );
     },
 
-    updateById: async (job: Object) => {
+    updateById: async (job: JobUpdate) => {
         try {
             showLoading();
-            const data = { id: get().jobDetail?.id, ...job };
+            const payload = {
+                ...job,
+                deadline: job.deadline ? formatDateToISOWithOffset(job.deadline) : "",
+                quantity: Number(job.quantity),
+                salary_min: job.salary_min ? Number(job.salary_min) : null,
+                salary_max: job.salary_max ? Number(job.salary_max) : null,
+            };
+            const data = { id: get().jobDetail?.id, ...payload };
             await JobService.updateById(data);
-            set({ jobDetail: { ...get().jobDetail, ...job } as Job });
+            set({ jobDetail: { ...get().jobDetail, ...payload } as Job });
             toast.success("Cập nhật việc làm thành công.");
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Cập nhật việc làm thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }
     },
 
-    create: async (job: Object) => {
+    create: async (job: JobCreate) => {
         try {
             showLoading();
-            await JobService.create(job);
+            const payload = {
+                ...job,
+                deadline: job.deadline ? formatDateToISOWithOffset(job.deadline) : "",
+                quantity: Number(job.quantity),
+                salary_min: job.salary_min ? Number(job.salary_min) : null,
+                salary_max: job.salary_max ? Number(job.salary_max) : null,
+            };
+            await JobService.create(payload);
             toast.success("Thêm việc làm thành công.");
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Thêm việc làm thất bại. Vui lòng thử lại.");
+            handleError(error);
         } finally {
             hideLoading();
         }

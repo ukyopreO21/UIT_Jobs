@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Application struct {
 	Id                        string  `db:"id" json:"id"`
 	JobId                     int     `db:"job_id" json:"job_id"`
@@ -28,9 +30,12 @@ type Application struct {
 
 type ApplicantionResponse struct {
 	Application
-	JobPosition   string  `db:"position" json:"position"`
-	JobFaculty    string  `db:"faculty" json:"faculty"`
-	JobDiscipline *string `db:"discipline" json:"discipline"`
-	CreatedAt     string  `db:"created_at" json:"created_at"`
-	UpdatedAt     string  `db:"updated_at" json:"updated_at"`
+	PositionName      string    `db:"position_name" json:"position_name"`
+	DepartmentName    string    `db:"department_name" json:"department_name"`
+	SubDepartmentName string    `db:"sub_department_name" json:"sub_department_name"`
+	SalaryType        string    `db:"salary_type" json:"salary_type"`
+	SalaryMin         *string   `db:"salary_min" json:"salary_min"`
+	SalaryMax         *string   `db:"salary_max" json:"salary_max"`
+	CreatedAt         time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt         time.Time `db:"updated_at" json:"updated_at"`
 }

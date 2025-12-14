@@ -1,12 +1,33 @@
 import type { Config } from "tailwindcss";
 import colors from "tailwindcss/colors";
 
-//#4263eb: tím đậm
-//#dbe4ff: tím nhạt
-
 const config: Config = {
     content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
     theme: {
+        screens: {
+            bp1: "30rem", // 480px
+            bp1x: "35rem", // 560px
+            bp2: "40rem", // 640px
+            bp2x: "45rem", // 720px
+            bp3: "50rem", // 800px
+            bp3x: "55rem", // 880px
+            bp4: "60rem", // 960px
+            bp4x: "65rem", // 1040px
+            bp5: "70rem", // 1120px
+            bp5x: "75rem", // 1200px
+            bp6: "80rem", // 1280px
+            bp6x: "85rem", // 1360px
+            bp7: "90rem", // 1440px
+            bp7x: "95rem", // 1520px
+            bp8: "100rem", // 1600px
+            bp8x: "105rem", // 1680px
+            bp9: "110rem", // 1760px
+            bp9x: "115rem", // 1840px
+            bp10: "120rem", // 1920px
+            bp11: "130rem", // 2080px
+            bp12: "140rem", // 2240px
+            bp13: "150rem", // 2400px
+        },
         extend: {
             colors: {
                 primary: {

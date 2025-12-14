@@ -1,18 +1,10 @@
 import { create } from "zustand";
-import axios from "axios";
-import toast from "react-hot-toast";
-import Job from "@/types/Job";
+import { Job } from "@/types/Job";
 import JobService from "@/services/job.service";
-import useAvailableFiltersStore from "./available-filters.store";
 import useLoadingStore from "./loading.store";
+import handleError from "@/utils/handle-error";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
-const { setAvailableFilterValues } = useAvailableFiltersStore.getState();
-
-interface FilterGroup {
-    faculty: string;
-    disciplines: string[];
-}
 
 interface JobState {
     jobs: Array<Job> | null;
@@ -20,10 +12,13 @@ interface JobState {
 
     searchValue: string;
     fields: {
-        positions?: string[];
-        filters?: FilterGroup[];
+        positions?: any[];
+        subDepartments?: any[];
+        minSalary?: number;
+        maxSalary?: number;
         startDate?: string;
         endDate?: string;
+        type?: string;
     };
     resultPerPage: number;
     currentPage: number;
@@ -42,9 +37,7 @@ const usePublicJobStore = create<JobState>((set, get) => ({
     jobs: null,
     jobDetail: null,
     searchValue: "",
-    fields: {
-        filters: [],
-    },
+    fields: {},
     resultPerPage: 12,
     currentPage: 1,
     totalPages: 1,
@@ -84,12 +77,7 @@ const usePublicJobStore = create<JobState>((set, get) => ({
             const result = await JobService.findById(id);
             set({ jobDetail: result });
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Lấy thông tin việc làm thất bại. Vui lòng thử lại sau.");
+            handleError(error);
         } finally {
             hideLoading();
         }
@@ -97,7 +85,6 @@ const usePublicJobStore = create<JobState>((set, get) => ({
 
     findByFields: async () => {
         try {
-            showLoading();
             const data = {
                 ...get().fields,
                 searchValue: get().searchValue,
@@ -109,16 +96,8 @@ const usePublicJobStore = create<JobState>((set, get) => ({
                 jobs: result.data,
                 totalPages: result.pagination.totalPages,
             });
-            setAvailableFilterValues(result.positions || [], result.faculties || []);
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage =
-                    error.response.data?.message ||
-                    "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                toast.error(errorMessage);
-            } else toast.error("Tìm kiếm việc làm thất bại. Vui lòng thử lại.");
-        } finally {
-            hideLoading();
+            handleError(error);
         }
     },
 }));

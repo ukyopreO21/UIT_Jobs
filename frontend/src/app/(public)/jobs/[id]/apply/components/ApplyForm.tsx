@@ -1,8 +1,9 @@
 import usePublicApplicationStore from "@/stores/public-application.store";
 import { AiOutlineForm } from "react-icons/ai";
 import { useState } from "react";
-import Input from "./Input";
-import Textarea from "./Textarea";
+import Input from "@/components/Input";
+import Textarea from "@/components/Textarea";
+import Select from "@/components/Select";
 
 const sections = [
     {
@@ -28,6 +29,11 @@ const sections = [
                 label: "Giới tính",
                 name: "applicant_gender",
                 required: true,
+                inputType: "select",
+                options: [
+                    { value: "Nam", label: "Nam" },
+                    { value: "Nữ", label: "Nữ" },
+                ],
             },
         ],
     },
@@ -135,12 +141,10 @@ const ApplyForm = ({ jobId }: { jobId: Number }) => {
                 <div
                     key={key}
                     className={`flex flex-col gap-2 ${!isLast && "border-b border-primary-border pb-8"}`}>
-                    <label className="text-lg font-semibold text-primary-text">
-                        {node.section.toUpperCase()}
-                    </label>
+                    <label className="text-lg font-semibold">{node.section.toUpperCase()}</label>
 
                     <div
-                        className={`grid grid-cols-1 ${!isLast && "md:grid-cols-2"} gap-x-12 gap-y-4`}>
+                        className={`grid grid-cols-1 ${!isLast && "bp2:grid-cols-2"} gap-x-12 gap-y-4`}>
                         {node.fields.map((child: any, idx: number) => renderNode(child, idx))}
                     </div>
                 </div>
@@ -160,6 +164,19 @@ const ApplyForm = ({ jobId }: { jobId: Number }) => {
         }
 
         if (node.inputType === "select") {
+            return (
+                <Select
+                    key={key}
+                    label={node.label}
+                    name={node.name}
+                    selected={{
+                        label: formData[node.name] ?? "",
+                        value: formData[node.name] ?? "",
+                    }}
+                    options={node.options}
+                    onChange={(value) => updateField(node.name, value)}
+                />
+            );
         }
 
         return (
@@ -179,12 +196,10 @@ const ApplyForm = ({ jobId }: { jobId: Number }) => {
 
     const updateField = (name: string, value: any) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
-        console.log("Updated Field: ", name, value);
     };
 
     const handleApply = () => {
         submitApplication(formData, jobId);
-        console.log("Form Data Submitted: ", formData);
     };
 
     return (
@@ -195,7 +210,7 @@ const ApplyForm = ({ jobId }: { jobId: Number }) => {
             <button
                 onClick={handleApply}
                 className="w-fit button-default transition-default self-center h-fit shrink-0 rounded-lg transition-default font-medium
-						px-6 lg:px-7 py-3 lg:py-4
+						px-6 bp4:px-7 py-3 bp4:py-4
 						text-secondary-blue-dark bg-secondary-blue-light hover:text-secondary-blue-dark-extra hover:bg-secondary-blue-light-extra">
                 <div className="flex-center gap-2">
                     <AiOutlineForm className="icon-default" />

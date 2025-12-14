@@ -28,14 +28,11 @@ func (ctrl *ApplicationController) generateId() string {
 }
 
 func (ctrl *ApplicationController) checkAppIdExists(repo *repository.ApplicationRepository, appId string) (bool, error) {
-	log.Println("Checking if application ID exists:", appId)
 	app, err := repo.FindById(appId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return false, nil
 		}
-
-		// Các lỗi khác → lỗi
 		return false, err
 	}
 	return app != nil, nil
@@ -58,22 +55,35 @@ func (ctrl *ApplicationController) Create(c *gin.Context) {
 	var application model.Application
 
 	if err := c.ShouldBindJSON(&application); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
 		return
 	}
 
-	log.Println("Creating application:", application)
+	job, err := repository.Repos.JobRepo.FindById(application.JobId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không tìm thấy việc làm đã chọn."})
+		return
+	}
+	if job == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Việc làm không tồn tại"})
+		return
+	}
+
+	now := time.Now().UTC()
+	if now.After(job.Deadline) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Không thể ứng tuyển vào việc làm đã quá hạn"})
+		return
+	}
 
 	uniqueId, err := ctrl.generateUniqueAppId(repository.Repos.ApplicationRepo)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate unique application ID"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể tạo mã hồ sơ"})
 		return
 	}
 	application.Id = uniqueId
-	log.Println("Generated unique application ID:", application.Id)
 	result, err := repository.Repos.ApplicationRepo.Create(&application)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể tạo hồ sơ"})
 		return
 	}
 	c.JSON(http.StatusCreated, result)
@@ -87,7 +97,7 @@ func (ctrl *ApplicationController) FindById(c *gin.Context) {
 		return
 	}
 	if application == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Application not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Hồ sơ không tồn tại"})
 		return
 	}
 	c.JSON(http.StatusOK, application)
@@ -104,18 +114,31 @@ func (ctrl *ApplicationController) FindByFields(c *gin.Context) {
 	}
 	searchValue := c.DefaultQuery("searchValue", "")
 
-	var fields = util.GetFields(c, "page", "resultPerPage", "searchValue")
-	data, pagination, quantityPerStatus, positions, faculties, err := repository.Repos.ApplicationRepo.FindByFields(fields, searchValue, page, resultPerPage)
+	user, err := util.GetUserTokenPayload(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Không đủ quyền truy cập"})
 		return
+	}
+
+	var fields = util.GetFields(c, "page", "resultPerPage", "searchValue")
+	data, pagination, quantityPerStatus, positions, subDepartments, err := repository.Repos.ApplicationRepo.FindByFields(user.EmployerId, fields, searchValue, page, resultPerPage)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
+		return
+	}
+
+	paginationResponse := gin.H{
+		"currentPage":   pagination["currentPage"],
+		"resultPerPage": pagination["resultPerPage"],
+		"totalRecords":  pagination["totalRecords"],
+		"totalPages":    pagination["totalPages"],
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"data":              data,
-		"pagination":        pagination,
+		"pagination":        paginationResponse,
 		"quantityPerStatus": quantityPerStatus,
 		"positions":         positions,
-		"faculties":         faculties,
+		"subDepartments":    subDepartments,
 	})
 }
 
@@ -125,15 +148,13 @@ func (ctrl *ApplicationController) UpdateById(c *gin.Context) {
 		Status string `json:"status" db:"status"`
 	}
 	if err := c.ShouldBindJSON(&application); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
 		return
 	}
-	log.Println("Update application:", application)
 	var fields = util.StructToMap(application, "id")
-	log.Println("fields: ", fields)
 	result, err := repository.Repos.ApplicationRepo.UpdateById(application.Id, fields)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	c.JSON(http.StatusOK, result)
@@ -145,13 +166,13 @@ func (ctrl *ApplicationController) DeleteById(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
 		return
 	}
 
 	result, err := repository.Repos.ApplicationRepo.DeleteById(body.Id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})
 		return
 	}
 	c.JSON(http.StatusOK, result)

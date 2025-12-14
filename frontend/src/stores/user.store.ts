@@ -5,6 +5,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import UserService from "@/services/user.service";
 import useLoadingStore from "./loading.store";
 import User from "@/types/User";
+import handleError from "@/utils/handle-error";
 
 const { showLoading, hideLoading } = useLoadingStore.getState();
 
@@ -32,12 +33,7 @@ export const useUserStore = create<UserState>()(
                     toast.success("Đăng nhập thành công");
                     set({ user: result });
                 } catch (error: unknown) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        const errorMessage =
-                            error.response.data?.message ||
-                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                        toast.error(errorMessage);
-                    } else toast.error("Lỗi không xác định");
+                    handleError(error);
                 } finally {
                     hideLoading();
                 }
@@ -50,12 +46,7 @@ export const useUserStore = create<UserState>()(
                     toast.success("Đăng xuất thành công");
                     set({ user: null });
                 } catch (error: unknown) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        const errorMessage =
-                            error.response.data?.message ||
-                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                        toast.error(errorMessage);
-                    } else toast.error("Lỗi không xác định");
+                    handleError(error);
                 } finally {
                     hideLoading();
                 }
@@ -70,12 +61,7 @@ export const useUserStore = create<UserState>()(
                         user: { ...state.user, ...data } as User,
                     }));
                 } catch (error: unknown) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        const errorMessage =
-                            error.response.data?.message ||
-                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                        toast.error(errorMessage);
-                    } else toast.error("Lỗi không xác định");
+                    handleError(error);
                 } finally {
                     hideLoading();
                 }
@@ -102,12 +88,7 @@ export const useUserStore = create<UserState>()(
                         toast.success("Đổi mật khẩu thành công");
                     } else toast.error("Người dùng không hợp lệ");
                 } catch (error: unknown) {
-                    if (axios.isAxiosError(error) && error.response) {
-                        const errorMessage =
-                            error.response.data?.message ||
-                            "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.";
-                        toast.error(errorMessage);
-                    } else toast.error("Lỗi không xác định");
+                    handleError(error);
                 } finally {
                     hideLoading();
                 }

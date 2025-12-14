@@ -12,7 +12,7 @@ const ManageViewHeader = ({
     return (
         <div className="admin-page-side-view-header-default">
             <div className="flex flex-col gap-1">
-                <span className="text-lg lg:text-xl font-medium">{title}</span>
+                <span className="text-lg bp4:text-xl font-medium">{title}</span>
                 <span className="text-primary-text">{subTitle}</span>
             </div>
             <button onClick={() => toggleSideView(false)}>

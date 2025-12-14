@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
-const ManageSearchBar = ({
+const SearchBar = ({
     handleSearch,
     placeholder,
+    width,
 }: {
     handleSearch: (query: string) => void;
     placeholder?: string;
+    width?: string;
 }) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     return (
-        <div className="flex-center rounded-md w-fit input-container-default input-container-outline-default transition-default">
+        <div
+            className={`flex-center rounded-md ${width ?? "w-fit"} input-container-default input-container-outline-default transition-default`}>
             <HiMagnifyingGlass className="icon-default" />
             <input
                 value={searchQuery}
@@ -24,10 +27,10 @@ const ManageSearchBar = ({
                 }}
                 type="text"
                 placeholder={placeholder}
-                className="input-text-default text-default lg:w-64"
+                className="input-text-default text-default bp4:w-64"
             />
         </div>
     );
 };
 
-export default ManageSearchBar;
+export default SearchBar;

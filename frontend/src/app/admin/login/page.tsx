@@ -28,7 +28,7 @@ const LoginPage = () => {
         <div className="flex-center h-screen text-default bg-cover bg-center bg-fixed bg-[url('/auth-background.png')]">
             <div className="absolute inset-0 backdrop-blur-[2px] bg-black/10"></div>
             <form
-                className="z-1 w-full max-w-100 h-fit flex flex-col gap-6 rounded-2xl p-6 not-sm:m-4
+                className="z-1 w-full max-w-100 h-fit flex flex-col gap-6 rounded-2xl p-6 not-bp2:m-4
 							bg-white/30 backdrop-blur-sm shadow-2xl border-2 border-white/20">
                 <span className="text-center block w-full">UIT - Cổng thông tin tuyển dụng</span>
 
@@ -52,14 +52,14 @@ const LoginPage = () => {
                     />
                 </div>
 
-                <button className="self-end text-xs lg:text-sm">Quên mật khẩu?</button>
+                <button className="self-end text-xs bp4:text-sm">Quên mật khẩu?</button>
 
                 <button
                     onClick={handleLogin}
                     disabled={isLoading}
                     className={`font-medium transition-default rounded-lg flex-center gap-2
 								text-white bg-secondary-blue-dark hover:bg-secondary-blue-dark-extra
-								h-11 lg:h-12
+								h-11 bp4:h-12
 								${isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}>
                     {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                 </button>

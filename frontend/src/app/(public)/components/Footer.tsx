@@ -39,20 +39,20 @@ const socialMedia = [
 const Footer = () => {
     return (
         <footer className="w-full p-4 text-primary-text text-default mt-40">
-            <div className="mx-auto max-w-7xl">
-                <div className="flex-between-center flex-col sm:flex-row gap-2 bg-secondary-blue-light rounded-xl p-4 border border-secondary-blue-light-extra">
+            <div className="mx-auto max-w-360">
+                <div className="flex-between-center flex-col bp1:flex-row gap-2 bg-secondary-blue-light rounded-xl p-4 border border-secondary-blue-light-extra">
                     <img className="max-h-12 w-auto" src="/logo.png" alt="Logo" />
                     <div>
-                        <div className="text-center sm:text-right text-base lg:text-lg text-secondary-blue-dark-extra">
+                        <div className="text-center bp1:text-right text-base bp4:text-lg text-secondary-blue-dark-extra">
                             Đại học Quốc gia Thành phố Hồ Chí Minh
                         </div>
-                        <div className="text-center sm:text-right text-secondary-blue-dark-extra">
+                        <div className="text-center bp1:text-right text-secondary-blue-dark-extra">
                             Trường Đại học Công nghệ Thông tin
                         </div>
                     </div>
                 </div>
 
-                <div className="py-4 flex flex-col md:flex-row justify-between gap-5">
+                <div className="py-4 flex flex-col bp2x:flex-row justify-between gap-5">
                     <div className="flex flex-col gap-5">
                         <div className="text-black">Cổng Thông tin Tuyển dụng</div>
                         <div className="flex flex-col gap-2">
@@ -68,11 +68,11 @@ const Footer = () => {
                     </div>
                     <div className="flex flex-col gap-5">
                         <div className="text-black">Theo dõi các trang chính thức</div>
-                        <div className="flex gap-2 md:self-end">
+                        <div className="flex gap-2 bp2x:self-end">
                             {socialMedia.map((info, index) => (
                                 <a
                                     key={index}
-                                    className="flex-center rounded-full h-9 w-9 lg:h-10 lg:w-10"
+                                    className="flex-center rounded-full h-9 w-9 bp4:h-10 bp4:w-10"
                                     style={{ background: info.background }}>
                                     {info.icon}
                                 </a>

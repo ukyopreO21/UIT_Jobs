@@ -32,7 +32,7 @@ const ManageBottomNavigation = () => {
     ];
 
     return (
-        <div className="flex w-full border-t border-primary-border bg-white h-16 pt-2 pb-4 px-4 lg:hidden">
+        <div className="flex w-full border-t border-primary-border bg-white h-16 pt-2 pb-4 px-4 bp4:hidden">
             {menuItems.map((item) => {
                 const active = isActive(item.path);
                 return (

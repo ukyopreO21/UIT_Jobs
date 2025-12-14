@@ -1,20 +1,21 @@
 @config "../../tailwind.config.ts";
 @import "tailwindcss";
 
+
 @layer components {
 	.button-default {
 		@apply h-9 px-3;
-		@apply lg:h-10;
+		@apply bp4:h-10;
 	}
 
 	.text-default {
 		@apply text-sm;
-		@apply lg:text-base;
+		@apply bp4:text-base;
 	}
 
 	.icon-default {
 		@apply w-4 h-4;
-		@apply lg:w-5 lg:h-5;
+		@apply bp4:w-5 bp4:h-5;
 	}
 
 	.input-text-default {
@@ -24,7 +25,7 @@
 	.input-container-default {
 		@apply flex items-center gap-3;
 		@apply h-9 px-3;
-		@apply lg:h-10;
+		@apply bp4:h-10;
 	}
 
 	.input-container-outline-default {
@@ -35,6 +36,10 @@
 	.input-container-outline-black {
 		@apply outline-1 outline-black/20 rounded-md;
 		@apply focus-within:outline-2 focus-within:outline-secondary-blue-dark;
+	}
+
+	.disabled {
+		@apply bg-primary-bg-100 cursor-not-allowed;
 	}
 }
 

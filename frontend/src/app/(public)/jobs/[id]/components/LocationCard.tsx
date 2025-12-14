@@ -4,7 +4,7 @@ const LocationCard = ({ location }: { location: string }) => {
     return (
         location !== "" && (
             <div className="border border-primary-border rounded-lg p-4 flex flex-col">
-                <label className="text-lg lg:text-xl font-medium border-b border-primary-border mb-3 pb-3">
+                <label className="text-lg bp4:text-xl font-medium border-b border-primary-border mb-3 pb-3">
                     ĐỊA ĐIỂM LÀM VIỆC
                 </label>
                 <div className="flex flex-col gap-1">

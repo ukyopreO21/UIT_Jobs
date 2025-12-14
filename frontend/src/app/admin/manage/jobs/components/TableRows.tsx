@@ -1,17 +1,14 @@
 import Job from "@/types/Job";
 import { formatDate } from "@/utils/format-date";
+import LoadingLink from "@/components/LoadingLink";
 import { AiOutlineFileText } from "react-icons/ai";
 
 const TableRows = ({
     data,
     colsToFill,
-    toggleSideView,
-    handleLoadData,
 }: {
     data: Array<Job> | null;
     colsToFill: Array<keyof Job>;
-    toggleSideView: () => void;
-    handleLoadData: (item: Job) => void;
 }) => {
     return (
         <tbody>
@@ -26,7 +23,7 @@ const TableRows = ({
                                 <div className="px-4 py-2 text-center text-default">
                                     {col === "deadline"
                                         ? value
-                                            ? formatDate(value)
+                                            ? formatDate(String(value))
                                             : ""
                                         : (value ?? "")}
                                 </div>
@@ -35,16 +32,13 @@ const TableRows = ({
                     })}
                     <td>
                         <div className="px-4 py-2 flex-center">
-                            <button
-                                onClick={() => {
-                                    handleLoadData(item);
-                                    toggleSideView();
-                                }}
+                            <LoadingLink
+                                href={`/admin/manage/jobs/${item.id}`}
                                 className="rounded-md flex-center
 										 	bg-secondary-blue-light text-secondary-blue-dark hover:bg-secondary-blue-light-extra hover:text-secondary-blue-dark-extra transition-default
-											h-9 w-9 lg:h-10 lg:w-10">
+											h-9 w-9 bp4:h-10 bp4:w-10">
                                 <AiOutlineFileText className="icon-default" />
-                            </button>
+                            </LoadingLink>
                         </div>
                     </td>
                 </tr>

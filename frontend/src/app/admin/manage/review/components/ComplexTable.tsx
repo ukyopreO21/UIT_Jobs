@@ -32,8 +32,8 @@ const ComplexTable = ({
         "Thời gian nộp",
         "Họ và tên",
         "Vị trí",
-        "Đơn vị",
-        "Bộ môn",
+        "Phòng/ban",
+        "Tiểu phòng/ban",
         "Trạng thái",
         "Chi tiết",
     ];
@@ -42,9 +42,9 @@ const ComplexTable = ({
         "id",
         "created_at",
         "applicant_name",
-        "position",
-        "faculty",
-        "discipline",
+        "position_name",
+        "department_name",
+        "sub_department_name",
         "status",
     ];
 
@@ -63,7 +63,7 @@ const ComplexTable = ({
                     {status.map((name) => (
                         <Tab
                             key={name}
-                            className="h-11 lg:h-12 px-4 tab-underline text-primary-text data-selected:text-black overflow-hidden text-default">
+                            className="h-11 bp4:h-12 px-4 tab-underline text-primary-text data-selected:text-black overflow-hidden text-default">
                             {name} ({quantityPerStatus[name]})
                         </Tab>
                     ))}
@@ -71,7 +71,7 @@ const ComplexTable = ({
                 <TabPanels className="flex-1 min-h-0 overflow-auto">
                     {status.map((name) => (
                         <TabPanel className="h-full flex flex-1 flex-col" key={name}>
-                            <div className="px-4 h-17 lg:h-18 w-full flex-between-center border-b border-primary-border">
+                            <div className="px-4 h-17 bp4:h-18 w-full flex-between-center border-b border-primary-border">
                                 <ManageFilterButton
                                     hasNoti={!isFieldsEmpty}
                                     toggleSideView={() => toggleFiltersView(true)}
@@ -86,7 +86,7 @@ const ComplexTable = ({
                                 <div className="flex-1 overflow-auto">
                                     <table className="w-full">
                                         <thead className="sticky top-0">
-                                            <tr className="h-11 lg:h-12 bg-primary-bg-100">
+                                            <tr className="h-11 bp4:h-12 bg-primary-bg-100">
                                                 {colsToShow.map((col, index) => (
                                                     <th key={index} className="font-normal">
                                                         <div className="px-4 text-primary-text text-default">
@@ -97,12 +97,7 @@ const ComplexTable = ({
                                             </tr>
                                         </thead>
 
-                                        <TableRows
-                                            data={applications}
-                                            colsToFill={colsToFill}
-                                            toggleSideView={() => toggleDetailsView(true)}
-                                            handleLoadData={setApplicationDetail}
-                                        />
+                                        <TableRows data={applications} colsToFill={colsToFill} />
                                     </table>
                                 </div>
                             ) : (

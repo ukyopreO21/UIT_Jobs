@@ -24,7 +24,10 @@ export default interface Application {
     applicant_note: string;
     created_at: string;
     updated_at: string;
-    position: string;
-    faculty: string;
-    discipline: string;
+    position_name: string;
+    department_name: string;
+    sub_department_name: string;
+    salary_type: string;
+    salary_min: number;
+    salary_max: number;
 }

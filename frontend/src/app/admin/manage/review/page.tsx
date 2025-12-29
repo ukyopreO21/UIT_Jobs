@@ -11,10 +11,7 @@ const ReviewPage = () => {
     const [isFiltersViewShowing, setIsFiltersViewShowing] = useState<boolean>(false);
 
     const findByFields = useAdminApplicationStore((state) => state.findByFields);
-
-    const toggleDetailsView = (value: boolean) => {
-        setIsDetailsViewShowing(value);
-    };
+    const currentStatus = useAdminApplicationStore((state) => state.fields.status);
 
     const toggleFiltersView = (value: boolean) => {
         setIsFiltersViewShowing(value);
@@ -39,10 +36,7 @@ const ReviewPage = () => {
                 <Breadcrumb items={[{ label: "Hồ sơ" }]} />
             </div>
 
-            <ComplexTable
-                toggleDetailsView={toggleDetailsView}
-                toggleFiltersView={toggleFiltersView}
-            />
+            <ComplexTable currentStatus={currentStatus} toggleFiltersView={toggleFiltersView} />
 
             <Backdrop
                 toggleBackdrop={toggleBackdrop}

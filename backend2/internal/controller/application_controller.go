@@ -7,11 +7,13 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"time"
 
 	"uitjobs-backend/internal/model"
 	"uitjobs-backend/internal/repository"
+	"uitjobs-backend/internal/service"
 	"uitjobs-backend/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +25,6 @@ func (ctrl *ApplicationController) generateId() string {
 	now := time.Now()
 	datePart := fmt.Sprintf("%04d%02d%02d", now.Year(), now.Month(), now.Day())
 	randomPart := fmt.Sprintf("%06d", rand.Intn(1000000))
-	log.Println("Generated ID parts:", datePart+randomPart)
 	return datePart + randomPart
 }
 
@@ -52,12 +53,32 @@ func (ctrl *ApplicationController) generateUniqueAppId(repo *repository.Applicat
 }
 
 func (ctrl *ApplicationController) Create(c *gin.Context) {
-	var application model.Application
+	file, err := c.FormFile("applicant_cv")
+	var cvPath string = ""
 
-	if err := c.ShouldBindJSON(&application); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng kiểm tra lại thông tin đã nhập."})
+	if err == nil {
+		filename := fmt.Sprintf("%d_%s", time.Now().Unix(), filepath.Base(file.Filename))
+		savePath := filepath.Join("uploads", filename)
+
+		if err := c.SaveUploadedFile(file, savePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể lưu file CV"})
+			return
+		}
+
+		cvPath = "/uploads/" + filename
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Vui lòng đính kèm CV"})
 		return
 	}
+
+	var application model.Application
+
+	if err := c.ShouldBind(&application); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dữ liệu không hợp lệ: " + err.Error()})
+		return
+	}
+
+	application.ApplicantCV = cvPath
 
 	job, err := repository.Repos.JobRepo.FindById(application.JobId)
 	if err != nil {
@@ -83,9 +104,22 @@ func (ctrl *ApplicationController) Create(c *gin.Context) {
 	application.Id = uniqueId
 	result, err := repository.Repos.ApplicationRepo.Create(&application)
 	if err != nil {
+		log.Println("Create application error:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Không thể tạo hồ sơ"})
 		return
 	}
+
+	go func() {
+		if err := service.SendApplicationEmail(
+			application.ApplicantEmail,
+			job.PositionName,
+			job.Title,
+			application.Id,
+		); err != nil {
+			log.Println("Send mail error:", err)
+		}
+	}()
+
 	c.JSON(http.StatusCreated, result)
 }
 
@@ -116,11 +150,12 @@ func (ctrl *ApplicationController) FindByFields(c *gin.Context) {
 
 	user, err := util.GetUserTokenPayload(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Không đủ quyền truy cập"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "Không đủ quyền truy cập"})
 		return
 	}
 
 	var fields = util.GetFields(c, "page", "resultPerPage", "searchValue")
+
 	data, pagination, quantityPerStatus, positions, subDepartments, err := repository.Repos.ApplicationRepo.FindByFields(user.EmployerId, fields, searchValue, page, resultPerPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Đã có lỗi xảy ra. Vui lòng thử lại."})

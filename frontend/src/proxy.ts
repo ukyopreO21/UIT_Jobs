@@ -3,23 +3,20 @@ import type { NextRequest } from "next/server";
 
 export function proxy(req: NextRequest) {
     const accessToken = req.cookies.get("accessToken")?.value;
+    const refreshToken = req.cookies.get("refreshToken")?.value;
 
-    if (!accessToken) return NextResponse.redirect(new URL("/admin/login", req.url));
+    console.log(
+        "[MIDDLEWARE] URL:",
+        req.url,
+        "accessToken:",
+        !!accessToken,
+        "refreshToken:",
+        !!refreshToken
+    );
 
-    try {
-        const payload = JSON.parse(Buffer.from(accessToken.split(".")[1], "base64").toString());
-        const exp = payload.exp * 1000;
-        if (exp < Date.now()) {
-            const res = NextResponse.redirect(new URL("/admin/login", req.url));
-            res.cookies.delete("accessToken");
-            res.cookies.delete("refreshToken");
-            return res;
-        }
-    } catch (error) {
-        const res = NextResponse.redirect(new URL("/admin/login", req.url));
-        res.cookies.delete("accessToken");
-        res.cookies.delete("refreshToken");
-        return res;
+    if (!accessToken && !refreshToken) {
+        console.log("[MIDDLEWARE] no tokens, redirect to login & clear localStorage");
+        return NextResponse.redirect(new URL("/admin/login", req.url));
     }
 
     return NextResponse.next();

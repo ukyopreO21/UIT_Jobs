@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"time"
 	"uitjobs-backend/internal/model"
@@ -10,7 +11,7 @@ import (
 )
 
 var (
-	accessTokenExpires  = time.Hour * 24 * 7  // 7d
+	accessTokenExpires  = time.Hour * 24 * 1  // 1d
 	refreshTokenExpires = time.Hour * 24 * 30 // 30d
 	secretKey           = []byte(os.Getenv("JWT_SECRET"))
 )
@@ -51,12 +52,19 @@ func VerifyToken(tokenString string) (*model.UserClaims, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		switch {
+		case errors.Is(err, jwt.ErrTokenExpired):
+			return nil, fmt.Errorf("token_expired")
+		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+			return nil, fmt.Errorf("invalid_signature")
+		default:
+			return nil, fmt.Errorf("invalid_token")
+		}
 	}
 
 	claims, ok := token.Claims.(*model.UserClaims)
 	if !ok || !token.Valid {
-		return nil, errors.New("invalid token")
+		return nil, errors.New("invalid_token")
 	}
 
 	return claims, nil

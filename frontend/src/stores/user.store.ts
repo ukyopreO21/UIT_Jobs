@@ -78,6 +78,10 @@ export const useUserStore = create<UserState>()(
                         toast.error("Vui lòng điền đầy đủ thông tin");
                         return;
                     }
+                    if (currentPassword === newPassword) {
+                        toast.error("Mật khẩu mới không được trùng với mật khẩu hiện tại");
+                        return;
+                    }
                     if (newPassword !== confirmNewPassword) {
                         toast.error("Mật khẩu mới và xác nhận mật khẩu mới không khớp");
                         return;

@@ -18,8 +18,8 @@ type Job struct {
 	Requirements    *schema.MixedJSONStringArray `db:"requirements" json:"requirements"`
 	Benefits        *schema.MixedJSONStringArray `db:"benefits" json:"benefits"`
 	SubDepartmentId int                          `db:"sub_department_id" json:"sub_department_id"`
-	SalaryMin       *string                      `db:"salary_min" json:"salary_min"`
-	SalaryMax       *string                      `db:"salary_max" json:"salary_max"`
+	SalaryMin       *int                         `db:"salary_min" json:"salary_min"`
+	SalaryMax       *int                         `db:"salary_max" json:"salary_max"`
 	SalaryType      string                       `db:"salary_type" json:"salary_type"`
 }
 

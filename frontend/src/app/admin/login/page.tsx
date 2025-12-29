@@ -39,6 +39,11 @@ const LoginPage = () => {
                         placeholder="Tên đăng nhập"
                         className="input-text-default text-default"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                            }
+                        }}
                     />
                 </div>
 
@@ -49,6 +54,11 @@ const LoginPage = () => {
                         placeholder="Mật khẩu"
                         className="input-text-default text-default"
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (e.key === "Enter") {
+                                handleLogin(e);
+                            }
+                        }}
                     />
                 </div>
 

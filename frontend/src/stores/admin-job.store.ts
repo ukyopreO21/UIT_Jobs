@@ -148,7 +148,7 @@ const useAdminJobStore = create<JobState>((set, get) => ({
                 salary_max: job.salary_max ? Number(job.salary_max) : null,
             };
             const data = { id: get().jobDetail?.id, ...payload };
-            await JobService.updateById(data);
+            await JobService.updateById(Number(data.id), data);
             set({ jobDetail: { ...get().jobDetail, ...payload } as Job });
             toast.success("Cập nhật việc làm thành công.");
         } catch (error: unknown) {

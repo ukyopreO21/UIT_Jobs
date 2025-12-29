@@ -17,13 +17,25 @@ const usePublicApplicationStore = create<PublicApplicationState>((set, get) => (
     updated_at: "",
     status: "",
 
-    submitApplication: async (applicationData: Object, jobId: Number) => {
+    submitApplication: async (applicationData: any, jobId: Number) => {
         try {
             showLoading();
-            const submitData = { ...applicationData, status: "Đã ghi nhận", job_id: jobId };
-            const response = await ApplicationService.create(submitData);
-            toast.success("Nộp hồ sơ thành công!");
-            return response.data;
+            const formData = new FormData();
+            formData.append("job_id", jobId.toString());
+            formData.append("status", "Đã ghi nhận");
+
+            Object.keys(applicationData).forEach((key) => {
+                const value = applicationData[key];
+
+                if (value === null || value === undefined) return;
+                if (value instanceof File) {
+                    formData.append(key, value);
+                } else {
+                    formData.append(key, value.toString());
+                }
+            });
+
+            await ApplicationService.create(formData);
         } catch (error: unknown) {
             handleError(error);
         } finally {

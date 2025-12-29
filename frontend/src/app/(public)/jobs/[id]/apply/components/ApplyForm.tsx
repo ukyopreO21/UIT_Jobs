@@ -117,8 +117,8 @@ const sections = [
         fields: [
             {
                 label: "CV",
-                type: "text",
-                inputType: "textarea",
+                type: "file",
+
                 name: "applicant_cv",
             },
             {
@@ -130,7 +130,7 @@ const sections = [
     },
 ];
 
-const ApplyForm = ({ jobId }: { jobId: Number }) => {
+const ApplyForm = ({ jobId, setSuccess }: { jobId: Number; setSuccess: () => void }) => {
     const submitApplication = usePublicApplicationStore((state) => state.submitApplication);
 
     const [formData, setFormData] = useState<{ [key: string]: any }>({});
@@ -198,8 +198,11 @@ const ApplyForm = ({ jobId }: { jobId: Number }) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleApply = () => {
-        submitApplication(formData, jobId);
+    const handleApply = async () => {
+        try {
+            await submitApplication(formData, jobId);
+            setSuccess();
+        } catch (error) {}
     };
 
     return (

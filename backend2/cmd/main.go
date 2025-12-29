@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 	"uitjobs-backend/internal/database"
-	"uitjobs-backend/internal/middleware"
 	"uitjobs-backend/internal/repository"
 	"uitjobs-backend/internal/route"
 
@@ -34,16 +33,22 @@ func main() {
 	repository.InitRepositories(db)
 
 	r := gin.Default()
+	r.RedirectTrailingSlash = false
+	r.RedirectFixedPath = false
+
+	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
+		os.Mkdir("uploads", 0755)
+	}
+
+	r.Static("/uploads", "./uploads")
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5000", "http://192.168.100.57:5000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
-
-	r.Use(middleware.OptionalAuth())
 
 	route.RegisterRoutes(r)
 

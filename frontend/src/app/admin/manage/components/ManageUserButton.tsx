@@ -32,7 +32,7 @@ const UserButton = ({ user }: { user: User | null }) => {
     const handleLogout = async () => {
         try {
             await logout();
-            router.push("/admin/login");
+            window.location.href = "/admin/login";
         } catch (error) {
             console.error("Logout failed:", error);
         }

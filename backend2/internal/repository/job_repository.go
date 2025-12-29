@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -25,7 +24,6 @@ func (r *JobRepository) Create(job *model.Job) (sql.Result, error) {
 	query := util.InsertStruct(r.DB, "jobs", job, []string{"id"})
 	result, err := r.DB.NamedExec(query, job)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return result, nil
@@ -111,11 +109,9 @@ func (r *JobRepository) FindByFields(employer_id string, fields map[string]any, 
 
 func (r *JobRepository) UpdateById(id int, fields map[string]any) (sql.Result, error) {
 	if id == 0 {
-		log.Println("ID là bắt buộc cho lệnh cập nhật")
 		return nil, fmt.Errorf("ID là bắt buộc cho lệnh cập nhật")
 	}
 	if len(fields) == 0 {
-		log.Println("Không có trường nào để cập nhật")
 		return nil, fmt.Errorf("không có trường nào để cập nhật")
 	}
 
@@ -207,9 +203,17 @@ func (r *JobRepository) buildWhereClause(employer_id any, fields map[string]any,
 		}
 	}
 
+	// --- salary_type ---
+	if v, ok := fields["salaryType"]; ok {
+		if typeStr, ok2 := v.(string); ok2 && typeStr != "" {
+			conditions = append(conditions, "jobs.salary_type = ?")
+			args = append(args, typeStr)
+		}
+	}
+
 	// --- salary_min ---
 	if v, ok := fields["salaryMin"]; ok {
-		if val, ok2 := v.(float64); ok2 {
+		if val, ok2 := v.(string); ok2 {
 			conditions = append(conditions, "jobs.salary_min >= ?")
 			args = append(args, val)
 		}
@@ -217,7 +221,7 @@ func (r *JobRepository) buildWhereClause(employer_id any, fields map[string]any,
 
 	// --- salary_max ---
 	if v, ok := fields["salaryMax"]; ok {
-		if val, ok2 := v.(float64); ok2 {
+		if val, ok2 := v.(string); ok2 {
 			conditions = append(conditions, "jobs.salary_max <= ?")
 			args = append(args, val)
 		}
@@ -244,6 +248,7 @@ func (r *JobRepository) buildWhereClause(employer_id any, fields map[string]any,
 	}
 
 	whereClause := "WHERE " + strings.Join(conditions, " AND ")
+
 	return whereClause, args
 }
 

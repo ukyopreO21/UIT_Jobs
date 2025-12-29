@@ -8,7 +8,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 const pages = [
     { name: "Trang chủ", href: "/" },
     { name: "Việc làm", href: "/jobs" },
-    { name: "Tin tức", href: "/news" },
+    // { name: "Tin tức", href: "/news" },
     { name: "Tra cứu hồ sơ", href: "/tracking" },
     { name: "Nhà tuyển dụng", href: "/admin/login" },
 ];

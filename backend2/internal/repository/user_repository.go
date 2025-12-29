@@ -30,13 +30,13 @@ func (r *UserRepository) Create(user *model.User) (sql.Result, error) {
 	)
 }
 
-func (r *UserRepository) FindByUsername(username string) (*model.User, error) {
+func (r *UserRepository) FindByUsername(username string) (*model.UserResponse, error) {
 	query := `
         SELECT *
         FROM users
         WHERE username = ?
     `
-	var user model.User
+	var user model.UserResponse
 	err := r.DB.Get(&user, query, username)
 
 	if err != nil {

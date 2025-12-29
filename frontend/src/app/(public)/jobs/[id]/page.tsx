@@ -111,7 +111,7 @@ const JobDetail = () => {
 
     return (
         <div className="px-4 text-default">
-            <div className="mx-auto max-w-7xl mt-4">
+            <div className="mx-auto max-w-360 mt-4">
                 <Breadcrumb
                     items={[
                         { label: "Trang chủ", href: "/" },

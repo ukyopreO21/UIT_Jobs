@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -37,7 +36,6 @@ func (r *ApplicationRepository) FindById(id string) (*model.ApplicantionResponse
 
 	err := r.DB.QueryRowx(query, id).StructScan(&app)
 	if err != nil {
-		log.Println("Error querying application by ID:", err)
 		return nil, err
 	}
 
@@ -188,6 +186,14 @@ func (r *ApplicationRepository) buildWhereClause(employer_id any, fields map[str
 	if employer_id != "" {
 		conditions = append(conditions, "departments.employer_id = ?")
 		args = append(args, employer_id)
+	}
+
+	// --- status ---
+	if v, ok := fields["status"]; ok {
+		if status, ok2 := v.(string); ok2 && status != "" {
+			conditions = append(conditions, "applications.status = ?")
+			args = append(args, status)
+		}
 	}
 
 	if v, ok := fields["positions[]"]; ok {

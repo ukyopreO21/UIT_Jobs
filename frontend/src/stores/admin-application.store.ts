@@ -95,6 +95,8 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
         try {
             showLoading();
             const result = await ApplicationService.findById(id);
+            console.log("result", result);
+
             set({ applicationDetail: result });
         } catch (error: unknown) {
             handleError(error);
@@ -113,6 +115,7 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
                 resultPerPage: get().resultPerPage,
             };
             const result = await ApplicationService.findByFields(data);
+            console.log("result", result);
             set({
                 applications: result.data,
                 totalPages: result.pagination.totalPages,
@@ -155,7 +158,7 @@ const useAdminApplicationStore = create<ApplicationState>((set, get) => ({
         try {
             showLoading();
             const data = { status, id: get().applicationDetail?.id };
-            await ApplicationService.updateById(data);
+            await ApplicationService.updateById(String(data.id), data);
             set({ applicationDetail: { ...get().applicationDetail, status } as Application });
             toast.success(`Cập nhật trạng thái hồ sơ ${data.id} thành công.`);
         } catch (error: unknown) {

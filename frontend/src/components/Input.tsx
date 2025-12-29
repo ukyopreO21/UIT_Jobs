@@ -1,5 +1,5 @@
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineEdit } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatDate } from "@/utils/format-date";
 
 interface InputProps {
@@ -49,12 +49,13 @@ const Input = ({
         <div className="flex flex-col gap-2">
             <label className="text-primary-text text-default">{label}</label>
             <div
-                className={`input-container-default input-container-outline-default text-default transition-default ${width && width} ${disabled && "disabled"}`}>
+                className={`input-container-default input-container-outline-default text-default transition-default flex items-center ${width && width} ${disabled && "disabled"} ${type === "file" ? "p-1" : ""}`}>
                 <input
                     name={name}
-                    value={displayValue}
+                    value={type === "file" ? undefined : displayValue}
                     type={isPasswordField && showPassword ? "text" : type}
-                    className="input-text-default"
+                    className={`input-text-default w-full bg-transparent 
+                		${type === "file" ? "file:hidden file:mr-4 file:border-0 file:font-semibold h-10 py-2 px-2 cursor-pointer" : ""}`}
                     onChange={onChange}
                     placeholder={placeholder}
                     disabled={disabled}

@@ -7,10 +7,10 @@ import useAdminApplicationStore from "@/stores/admin-application.store";
 import Application from "@/types/Application";
 
 const ComplexTable = ({
-    toggleDetailsView,
+    currentStatus,
     toggleFiltersView,
 }: {
-    toggleDetailsView: (value: boolean) => void;
+    currentStatus: string;
     toggleFiltersView: (value: boolean) => void;
 }) => {
     const applications = useAdminApplicationStore((state) => state.applications);
@@ -19,7 +19,6 @@ const ComplexTable = ({
     const currentPage = useAdminApplicationStore((state) => state.currentPage);
     const totalPages = useAdminApplicationStore((state) => state.totalPages);
 
-    const setApplicationDetail = useAdminApplicationStore((state) => state.setApplicationDetail);
     const setSearchValue = useAdminApplicationStore((state) => state.setSearchValue);
     const setFields = useAdminApplicationStore((state) => state.setFields);
     const setResultPerPage = useAdminApplicationStore((state) => state.setResultPerPage);
@@ -57,7 +56,7 @@ const ComplexTable = ({
                     const selectedStatus = status[index];
                     setFields({ status: selectedStatus });
                 }}
-                defaultIndex={0}
+                defaultIndex={status.indexOf(currentStatus)}
                 className="flex flex-col h-full">
                 <TabList className="flex gap-4 border-b border-primary-border px-4 outline-none">
                     {status.map((name) => (

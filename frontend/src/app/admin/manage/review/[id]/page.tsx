@@ -266,9 +266,11 @@ const ReviewApplication = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-1 flex-col border border-primary-border bg-white rounded-md overflow-hidden p-4 gap-4">
-                        <label className="text-lg font-semibold">CV</label>
-                    </div>
+
+                    <iframe
+                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${applicationDetail?.applicant_cv}`}
+                        className="w-full border border-primary-border rounded-md bp8:flex-1 bp8:h-full h-[600px]"
+                    />
                 </div>
             </div>
         </div>

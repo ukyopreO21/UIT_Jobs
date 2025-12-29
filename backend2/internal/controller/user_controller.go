@@ -76,7 +76,7 @@ func (ctrl *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("accessToken", accessToken, 7*24*60*60, "/", "", false, true)
+	c.SetCookie("accessToken", accessToken, 60*60*24*2, "/", "", false, true)
 	c.SetCookie("refreshToken", refreshToken, 30*24*60*60, "/", "", false, true)
 
 	user.Password = ""
@@ -93,6 +93,10 @@ func (ctrl *UserController) RenewAccessToken(c *gin.Context) {
 	}
 	claims, err := util.VerifyToken(refreshToken)
 	if err != nil {
+		if err.Error() == "token_expired" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh_token_expired"})
+			return
+		}
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token không hợp lệ"})
 		return
 	}
@@ -109,9 +113,8 @@ func (ctrl *UserController) RenewAccessToken(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken": newAccessToken,
-	})
+	c.SetCookie("accessToken", newAccessToken, 60*60*24*2, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 
 func (ctrl *UserController) UpdateInfo(c *gin.Context) {
@@ -143,6 +146,7 @@ func (ctrl *UserController) ChangePassword(c *gin.Context) {
 
 	username := body.Username
 	password := body.Password
+	newPassword := body.NewPassword
 
 	user, err := repository.Repos.UserRepo.FindByUsername(username)
 	if err != nil {
@@ -152,6 +156,11 @@ func (ctrl *UserController) ChangePassword(c *gin.Context) {
 
 	if !util.ComparePassword(password, user.Password) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Sai mật khẩu"})
+		return
+	}
+
+	if !util.ComparePassword(newPassword, user.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Mật khẩu mới không được trùng với mật khẩu hiện tại"})
 		return
 	}
 

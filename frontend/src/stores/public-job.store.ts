@@ -14,8 +14,9 @@ interface JobState {
     fields: {
         positions?: any[];
         subDepartments?: any[];
-        minSalary?: number;
-        maxSalary?: number;
+        salaryType?: string;
+        salaryMin?: number;
+        salaryMax?: number;
         startDate?: string;
         endDate?: string;
         type?: string;
@@ -91,6 +92,7 @@ const usePublicJobStore = create<JobState>((set, get) => ({
                 page: get().currentPage,
                 resultPerPage: get().resultPerPage,
             };
+            showLoading();
             const result = await JobService.findByFields(data);
             set({
                 jobs: result.data,
@@ -98,6 +100,8 @@ const usePublicJobStore = create<JobState>((set, get) => ({
             });
         } catch (error: unknown) {
             handleError(error);
+        } finally {
+            hideLoading();
         }
     },
 }));

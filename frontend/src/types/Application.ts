@@ -10,9 +10,6 @@ export default interface Application {
     applicant_contact_address: string;
     applicant_phone: string;
     applicant_email: string;
-    second_choice_position: string;
-    second_choice_faculty: string;
-    second_choice_discipline: string;
     applicant_degree: string;
     applicant_inst_name: string;
     applicant_major: string;

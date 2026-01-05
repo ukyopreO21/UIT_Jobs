@@ -1,4 +1,4 @@
-import Job from "@/types/Job";
+import { Job } from "@/types/Job";
 import { formatDate } from "@/utils/format-date";
 import LoadingLink from "@/components/LoadingLink";
 import { AiOutlineFileText } from "react-icons/ai";

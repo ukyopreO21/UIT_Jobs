@@ -40,7 +40,7 @@ export default ({ label, value, name, onChange, placeholder, disabled }: Textare
                     className="input-text-default overflow-hidden resize-none py-2"
                     onChange={onChange}
                     placeholder={placeholder}
-                    rows={1}
+                    rows={3}
                     disabled={disabled}
                 />
             </div>

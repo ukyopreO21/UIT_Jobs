@@ -3,7 +3,7 @@ import TableRows from "./TableRows";
 import SearchBar from "@/components/SearchBar";
 import Pagination from "@/components/Pagination";
 import useAdminJobStore from "@/stores/admin-job.store";
-import Job from "@/types/Job";
+import { Job } from "@/types/Job";
 
 const ComplexTable = ({ toggleFiltersView }: { toggleFiltersView: (value: boolean) => void }) => {
     const jobs = useAdminJobStore((state) => state.jobs);
@@ -11,7 +11,6 @@ const ComplexTable = ({ toggleFiltersView }: { toggleFiltersView: (value: boolea
     const currentPage = useAdminJobStore((state) => state.currentPage);
     const totalPages = useAdminJobStore((state) => state.totalPages);
 
-    const setJobDetail = useAdminJobStore((state) => state.setJobDetail);
     const setSearchValue = useAdminJobStore((state) => state.setSearchValue);
     const setResultPerPage = useAdminJobStore((state) => state.setResultPerPage);
     const setCurrentPage = useAdminJobStore((state) => state.setCurrentPage);
@@ -21,25 +20,14 @@ const ComplexTable = ({ toggleFiltersView }: { toggleFiltersView: (value: boolea
     const colsToShow = [
         "Mã việc làm",
         "Hình thức",
-        "Vị trí",
-        "Phòng/ban",
-        "Tiểu phòng/ban",
+        "Tiêu đề",
         "Số lượng",
         "Bằng cấp",
         "Hạn chót",
         "Chi tiết",
     ];
 
-    const colsToFill: Array<keyof Job> = [
-        "id",
-        "type",
-        "position_name",
-        "department_name",
-        "sub_department_name",
-        "quantity",
-        "degree",
-        "deadline",
-    ];
+    const colsToFill: Array<keyof Job> = ["id", "type", "title", "quantity", "degree", "deadline"];
 
     return (
         <div className="flex-1 flex flex-col min-h-0 h-full border border-primary-border bg-white rounded-md overflow-hidden">

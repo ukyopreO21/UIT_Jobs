@@ -71,6 +71,12 @@ const sections = [
                 label: "Trình độ chuyên môn cao nhất",
                 name: "applicant_degree",
                 required: true,
+                inputType: "select",
+                options: [
+                    { value: "Đại học", label: "Đại học" },
+                    { value: "Thạc sĩ", label: "Thạc sĩ" },
+                    { value: "Tiến sĩ", label: "Tiến sĩ" },
+                ],
             },
             {
                 label: "Cơ sở đào tạo",
